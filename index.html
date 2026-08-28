@@ -1,61 +1,693 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VOIDFALL</title>
-  <style>
-    body{margin:0;overflow:hidden}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VOIDFALL</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  overflow:hidden;
+  background:#05050b;
+  font-family:Arial,sans-serif;
+  color:white;
+}
+canvas{display:block}
+
+#menu{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at center,#20204a 0%,#080811 55%,#020205 100%);
+}
+
+#menu h1{
+  font-size:64px;
+  margin:0 0 10px;
+  letter-spacing:8px;
+  text-shadow:0 0 25px #7b5cff;
+}
+
+#menu p{
+  color:#aaa;
+  margin-bottom:30px;
+}
+
+.menuBtn{
+  width:240px;
+  padding:15px;
+  margin:7px;
+  border:0;
+  border-radius:10px;
+  background:#6d4aff;
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.menuBtn:hover{
+  background:#896eff;
+}
+
+#hud{
+  position:fixed;
+  top:15px;
+  left:15px;
+  z-index:10;
+  font-size:18px;
+  line-height:1.6;
+  text-shadow:0 2px 5px black;
+}
+
+#crosshair{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:28px;
+  z-index:10;
+  pointer-events:none;
+}
+
+#guns{
+  position:fixed;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:center;
+  max-width:95%;
+}
+
+.gun{
+  padding:9px 12px;
+  border:1px solid #777;
+  border-radius:8px;
+  background:#111a;
+  color:white;
+  cursor:pointer;
+}
+
+.gun.active{
+  background:#6d4aff;
+}
+
+#mobile{
+  position:fixed;
+  bottom:100px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  padding:20px;
+  z-index:10;
+  pointer-events:none;
+}
+
+.move{
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  border:2px solid #ffffff66;
+  background:#ffffff22;
+  color:white;
+  font-size:30px;
+  pointer-events:auto;
+}
+</style>
 </head>
+
 <body>
+
+<!-- HOME SCREEN -->
+<div id="menu">
+  <h1>VOIDFALL</h1>
+  <p>ENTER THE ARENA</p>
+
+  <button class="menuBtn" onclick="startGame()">PLAY</button>
+  <button class="menuBtn" onclick="showGuns()">WEAPONS</button>
+  <button class="menuBtn" onclick="alert('WASD / ARROWS = MOVE\\nCLICK = FIRE\\n1-7 = CHANGE WEAPON')">
+    HOW TO PLAY
+  </button>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  ❤️ Health: <span id="health">100</span><br>
+  ⭐ Score: <span id="score">0</span><br>
+  🔫 <span id="weapon">Pulse Blaster</span>
+</div>
+
+<div id="crosshair">+</div>
+
+<!-- WEAPONS -->
+<div id="guns">
+  <button class="gun active" onclick="selectGun(0)">1 Pulse</button>
+  <button class="gun" onclick="selectGun(1)">2 Volt</button>
+  <button class="gun" onclick="selectGun(2)">3 Nova</button>
+  <button class="gun" onclick="selectGun(3)">4 Frost</button>
+  <button class="gun" onclick="selectGun(4)">5 Void</button>
+  <button class="gun" onclick="selectGun(5)">6 Rail</button>
+  <button class="gun" onclick="selectGun(6)">7 Gravity</button>
+</div>
+
+<!-- MOBILE -->
+<div id="mobile">
+  <button class="move" onclick="move(-1)">◀</button>
+  <button class="move" onclick="move(1)">▶</button>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
 <script>
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x101020);
 
-const camera=new THREE.PerspectiveCamera(
-  75,innerWidth/innerHeight,.1,1000
-);
-camera.position.set(0,4,8);
+let scene;
+let camera;
+let renderer;
+let player;
 
-const renderer=new THREE.WebGLRenderer();
-renderer.setSize(innerWidth,innerHeight);
-document.body.appendChild(renderer.domElement);
+let enemies=[];
+let shots=[];
 
-const light=new THREE.DirectionalLight(0xffffff,2);
-light.position.set(5,10,5);
-scene.add(light);
+let health=100;
+let score=0;
+let running=false;
 
-scene.add(new THREE.AmbientLight(0xffffff,.5));
+let weaponIndex=0;
 
-const floor=new THREE.Mesh(
-  new THREE.BoxGeometry(20,1,20),
-  new THREE.MeshStandardMaterial({color:0x303040})
-);
-floor.position.y=-1;
-scene.add(floor);
+const weapons=[
+  {name:"Pulse Blaster",speed:.7,power:1,color:0x00ffff},
+  {name:"Volt Rifle",speed:1.1,power:1,color:0xffff00},
+  {name:"Nova Cannon",speed:.35,power:4,color:0xff5500},
+  {name:"Frost Launcher",speed:.5,power:2,color:0x55ccff},
+  {name:"Void Beam",speed:1.4,power:1,color:0xaa00ff},
+  {name:"Railshot",speed:.9,power:5,color:0xffffff},
+  {name:"Gravity Gun",speed:.4,power:3,color:0xff00aa}
+];
 
-const player=new THREE.Mesh(
-  new THREE.BoxGeometry(1,2,1),
-  new THREE.MeshStandardMaterial({color:0x00ffff})
-);
-player.position.y=0;
-scene.add(player);
 
-function animate(){
-  requestAnimationFrame(animate);
-  player.rotation.y+=0.01;
-  renderer.render(scene,camera);
+/* START GAME */
+
+function startGame(){
+
+  document.getElementById("menu").style.display="none";
+
+  if(!scene){
+    createWorld();
+  }
+
+  running=true;
 }
 
-animate();
 
-addEventListener("resize",()=>{
-  camera.aspect=innerWidth/innerHeight;
-  camera.updateProjectionMatrix();
+/* 3D WORLD */
+
+function createWorld(){
+
+  scene=new THREE.Scene();
+
+  scene.background=new THREE.Color(0x070714);
+
+  camera=new THREE.PerspectiveCamera(
+    70,
+    innerWidth/innerHeight,
+    .1,
+    500
+  );
+
+  renderer=new THREE.WebGLRenderer({
+    antialias:true
+  });
+
   renderer.setSize(innerWidth,innerHeight);
+
+  renderer.setPixelRatio(
+    Math.min(devicePixelRatio,2)
+  );
+
+  document.body.appendChild(renderer.domElement);
+
+
+  /* LIGHT */
+
+  const light=new THREE.DirectionalLight(
+    0xffffff,
+    2
+  );
+
+  light.position.set(10,20,10);
+
+  scene.add(light);
+
+  scene.add(
+    new THREE.AmbientLight(
+      0x6666aa,
+      1
+    )
+  );
+
+
+  /* FLOOR */
+
+  const floor=new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      80,
+      1,
+      80
+    ),
+
+    new THREE.MeshStandardMaterial({
+      color:0x151525
+    })
+
+  );
+
+  floor.position.y=-1;
+
+  scene.add(floor);
+
+
+  /* GRID */
+
+  const grid=new THREE.GridHelper(
+    80,
+    40,
+    0x5533aa,
+    0x222244
+  );
+
+  grid.position.y=-.48;
+
+  scene.add(grid);
+
+
+  /* PLAYER */
+
+  player=new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      1,
+      2,
+      1
+    ),
+
+    new THREE.MeshStandardMaterial({
+      color:0x00ffff
+    })
+
+  );
+
+  player.position.set(
+    0,
+    0,
+    8
+  );
+
+  scene.add(player);
+
+
+  /* CAMERA */
+
+  camera.position.set(
+    0,
+    4,
+    12
+  );
+
+  camera.lookAt(
+    0,
+    0,
+    0
+  );
+
+
+  /* ENEMIES */
+
+  for(let i=0;i<8;i++){
+    spawnEnemy();
+  }
+
+
+  /* LOOP */
+
+  animate();
+}
+
+
+/* ENEMY */
+
+function spawnEnemy(){
+
+  const enemy=new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+      1.5,
+      2,
+      1.5
+    ),
+
+    new THREE.MeshStandardMaterial({
+      color:0xff2255
+    })
+
+  );
+
+  enemy.position.set(
+
+    (Math.random()*2-1)*25,
+
+    0,
+
+    (Math.random()*2-1)*25
+
+  );
+
+  enemy.userData.health=5;
+
+  scene.add(enemy);
+
+  enemies.push(enemy);
+}
+
+
+/* WEAPONS */
+
+function selectGun(i){
+
+  weaponIndex=i;
+
+  document.getElementById("weapon")
+    .textContent=weapons[i].name;
+
+  document.querySelectorAll(".gun")
+    .forEach((b,n)=>{
+      b.classList.toggle(
+        "active",
+        n===i
+      );
+    });
+}
+
+
+function showGuns(){
+
+  alert(
+    "VOIDFALL WEAPONS\\n\\n"+
+    "1 Pulse Blaster\\n"+
+    "2 Volt Rifle\\n"+
+    "3 Nova Cannon\\n"+
+    "4 Frost Launcher\\n"+
+    "5 Void Beam\\n"+
+    "6 Railshot\\n"+
+    "7 Gravity Gun"
+  );
+}
+
+
+/* SHOOT */
+
+addEventListener("click",()=>{
+
+  if(!running)return;
+
+  shoot();
+
 });
+
+
+function shoot(){
+
+  const gun=weapons[weaponIndex];
+
+  const shot=new THREE.Mesh(
+
+    new THREE.SphereGeometry(
+      .12,
+      8,
+      8
+    ),
+
+    new THREE.MeshBasicMaterial({
+      color:gun.color
+    })
+
+  );
+
+  shot.position.copy(player.position);
+
+  shot.position.y+=.5;
+
+  shot.userData.velocity=
+    new THREE.Vector3(
+      0,
+      0,
+      -gun.speed
+    );
+
+  shot.userData.power=
+    gun.power;
+
+  scene.add(shot);
+
+  shots.push(shot);
+}
+
+
+/* MOVE */
+
+function move(dir){
+
+  if(!running)return;
+
+  player.position.x+=dir*1.2;
+
+  player.position.x=
+    Math.max(
+      -25,
+      Math.min(
+        25,
+        player.position.x
+      )
+    );
+}
+
+
+/* KEYBOARD */
+
+addEventListener("keydown",e=>{
+
+  if(e.key==="ArrowLeft"||
+     e.key.toLowerCase()==="a")
+    move(-1);
+
+  if(e.key==="ArrowRight"||
+     e.key.toLowerCase()==="d")
+    move(1);
+
+  if(e.key>="1"&&e.key<="7")
+    selectGun(
+      Number(e.key)-1
+    );
+
+});
+
+
+/* GAME LOOP */
+
+function animate(){
+
+  requestAnimationFrame(animate);
+
+  if(!scene){
+    return;
+  }
+
+
+  /* ENEMIES */
+
+  enemies.forEach(enemy=>{
+
+    if(!running)return;
+
+    const dx=
+      player.position.x-
+      enemy.position.x;
+
+    const dz=
+      player.position.z-
+      enemy.position.z;
+
+    const distance=
+      Math.sqrt(
+        dx*dx+
+        dz*dz
+      );
+
+    if(distance>2){
+
+      enemy.position.x+=
+        dx/distance*.012;
+
+      enemy.position.z+=
+        dz/distance*.012;
+
+    }
+
+  });
+
+
+  /* SHOTS */
+
+  for(
+    let i=shots.length-1;
+    i>=0;
+    i--
+  ){
+
+    const shot=shots[i];
+
+    shot.position.add(
+      shot.userData.velocity
+    );
+
+
+    /* HIT */
+
+    for(
+      let j=enemies.length-1;
+      j>=0;
+      j--
+    ){
+
+      const enemy=enemies[j];
+
+      if(
+        shot.position.distanceTo(
+          enemy.position
+        )<1.5
+      ){
+
+        enemy.userData.health-
+          =shot.userData.power;
+
+        scene.remove(shot);
+
+        shots.splice(i,1);
+
+        if(enemy.userData.health<=0){
+
+          scene.remove(enemy);
+
+          enemies.splice(j,1);
+
+          score+=10;
+
+          document.getElementById(
+            "score"
+          ).textContent=score;
+
+          spawnEnemy();
+
+        }
+
+        break;
+      }
+    }
+
+
+    if(
+      shot.position.z<-60
+    ){
+
+      scene.remove(shot);
+
+      shots.splice(i,1);
+
+    }
+
+  }
+
+
+  /* DAMAGE */
+
+  enemies.forEach(enemy=>{
+
+    if(
+      enemy.position.distanceTo(
+        player.position
+      )<2
+    ){
+
+      health-=.05;
+
+      document.getElementById(
+        "health"
+      ).textContent=
+        Math.max(
+          0,
+          Math.floor(health)
+        );
+
+      if(health<=0){
+
+        running=false;
+
+        alert(
+          "YOU WERE KNOCKED OUT!\\n"+
+          "Score: "+score
+        );
+
+        location.reload();
+
+      }
+
+    }
+
+  });
+
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+}
+
+
+/* RESIZE */
+
+addEventListener(
+  "resize",
+  ()=>{
+
+    if(!camera||!renderer)
+      return;
+
+    camera.aspect=
+      innerWidth/innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+      innerWidth,
+      innerHeight
+    );
+
+  }
+);
+
 </script>
 
 </body>
