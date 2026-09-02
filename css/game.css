@@ -97,3 +97,68 @@
     bottom: 24px;
     right: 24px;
 }
+#map-roll {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, #17345f 0%, #070b14 70%);
+
+    color: white;
+}
+
+.roll-title {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin-bottom: 28px;
+    color: #7ec8ff;
+}
+
+#map-card {
+    width: min(560px, 82vw);
+    padding: 35px 30px;
+
+    text-align: center;
+
+    background: rgba(10, 25, 48, 0.95);
+    border: 2px solid #287cff;
+    border-radius: 16px;
+
+    box-shadow:
+        0 0 25px rgba(40, 124, 255, 0.45),
+        inset 0 0 30px rgba(40, 124, 255, 0.08);
+}
+
+#map-name {
+    font-size: clamp(30px, 6vw, 54px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: white;
+}
+
+#map-description {
+    margin-top: 12px;
+    font-size: 16px;
+    color: #a9c8e8;
+}
+
+.roll-status {
+    margin-top: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #63c7ff;
+}
+
+#map-roll.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
