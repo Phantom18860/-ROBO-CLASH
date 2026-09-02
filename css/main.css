@@ -1,1 +1,23 @@
+* {
+    box-sizing: border-box;
+}
 
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+a,
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+    font-family: inherit;
+}
