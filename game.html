@@ -12,13 +12,31 @@
 <body>
 
     <div id="game">
+
         <div id="crosshair">+</div>
 
         <div id="hud">
-            <div class="hud-item">HP <span id="health">100</span></div>
-            <div class="hud-item">ENERGY <span id="energy">100</span></div>
-            <div class="hud-item">WEAPON <span id="weapon">PULSE BLASTER</span></div>
+
+            <div class="hud-item">
+                HP
+                <div class="hud-bar">
+                    <div id="health-fill" class="hud-fill health-fill"></div>
+                </div>
+            </div>
+
+            <div class="hud-item">
+                ENERGY
+                <div class="hud-bar">
+                    <div id="energy-fill" class="hud-fill energy-fill"></div>
+                </div>
+            </div>
+
+            <div class="hud-item weapon-name" id="weapon">
+                PULSE BLASTER
+            </div>
+
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
