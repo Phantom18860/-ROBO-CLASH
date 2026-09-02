@@ -64,3 +64,9 @@
     color: #7ec8ff;
     font-size: 17px;
 }
+#health-fill,
+#energy-fill {
+    display: block;
+    height: 100%;
+    min-width: 5px;
+}
