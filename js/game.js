@@ -1,10 +1,8 @@
-// ROBO CLASH - GAME ENGINE
-
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x070b14);
 
 const camera = new THREE.PerspectiveCamera(
-    75,
+    70,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
@@ -13,36 +11,28 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 8, 12);
 camera.lookAt(0, 0, 0);
 
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
-
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-document.getElementById("game").appendChild(renderer.domElement);
+const game = document.getElementById("game");
+game.appendChild(renderer.domElement);
 
 
+// ====================
 // LIGHTING
+// ====================
 
-const ambientLight = new THREE.HemisphereLight(
-    0xffffff,
-    0x18243a,
-    2
-);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x18243a, 2));
 
-scene.add(ambientLight);
-
-const mainLight = new THREE.DirectionalLight(
-    0xffffff,
-    2
-);
-
-mainLight.position.set(5, 12, 5);
-scene.add(mainLight);
+const light = new THREE.DirectionalLight(0xffffff, 2);
+light.position.set(5, 12, 5);
+scene.add(light);
 
 
+// ====================
 // ARENA
+// ====================
 
 const floor = new THREE.Mesh(
     new THREE.BoxGeometry(40, 1, 40),
@@ -56,9 +46,6 @@ const floor = new THREE.Mesh(
 floor.position.y = -0.5;
 scene.add(floor);
 
-
-// GRID
-
 const grid = new THREE.GridHelper(
     40,
     40,
@@ -70,269 +57,183 @@ grid.position.y = 0.02;
 scene.add(grid);
 
 
+// ====================
 // MAPS
+// ====================
 
 const maps = [
-    {
-        name: "NEON CITY",
-        description: "A futuristic city packed with cover."
-    },
-    {
-        name: "ROBOT FACTORY",
-        description: "An industrial battlefield filled with machinery."
-    },
-    {
-        name: "LAVA CORE",
-        description: "A dangerous arena surrounding a molten reactor."
-    },
-    {
-        name: "FROST BASE",
-        description: "A frozen military base built for combat."
-    },
-    {
-        name: "MECHA FOREST",
-        description: "A mechanical forest hiding dangerous enemies."
-    },
-    {
-        name: "ORBITAL STATION",
-        description: "A futuristic station high above the planet."
-    },
-    {
-        name: "SCRAP DESERT",
-        description: "A huge desert filled with abandoned machines."
-    },
-    {
-        name: "POWER PLANT",
-        description: "A massive energy facility full of hazards."
-    }
+    ["NEON CITY", "A futuristic city packed with cover."],
+    ["ROBOT FACTORY", "An industrial battlefield filled with machinery."],
+    ["LAVA CORE", "A dangerous arena surrounding a molten reactor."],
+    ["FROST BASE", "A frozen military base built for combat."],
+    ["SCRAP DESERT", "A massive battlefield filled with abandoned machines."]
 ];
 
 
+// ====================
 // MAP ROLLER
+// ====================
 
 const mapRoll = document.getElementById("map-roll");
 const mapName = document.getElementById("map-name");
 const mapDescription = document.getElementById("map-description");
 const rollStatus = document.querySelector(".roll-status");
 
-let mapIndex = 0;
+let selectedMap = null;
 
-function startMapRoll() {
-
-    if (!mapRoll || !mapName || !rollStatus) {
-        return;
-    }
-
-    mapRoll.style.display = "flex";
-    mapRoll.style.opacity = "1";
+if (mapRoll && mapName && mapDescription && rollStatus) {
 
     rollStatus.textContent = "SELECTING MAP...";
 
+    let rolling = true;
+
     const roller = setInterval(() => {
 
-        const currentMap = maps[mapIndex % maps.length];
+        const randomMap =
+            maps[Math.floor(Math.random() * maps.length)];
 
-        mapName.textContent = currentMap.name;
-
-        if (mapDescription) {
-            mapDescription.textContent = currentMap.description;
-        }
-
-        mapIndex++;
+        mapName.textContent = randomMap[0];
+        mapDescription.textContent = randomMap[1];
 
     }, 120);
 
     setTimeout(() => {
 
+        rolling = false;
         clearInterval(roller);
 
-        const selectedMap =
+        selectedMap =
             maps[Math.floor(Math.random() * maps.length)];
 
-        mapName.textContent = selectedMap.name;
-
-        if (mapDescription) {
-            mapDescription.textContent =
-                selectedMap.description;
-        }
+        mapName.textContent = selectedMap[0];
+        mapDescription.textContent = selectedMap[1];
 
         rollStatus.textContent = "SELECTED MAP";
 
         setTimeout(() => {
-
-            mapRoll.style.opacity = "0";
-
-            setTimeout(() => {
-                mapRoll.style.display = "none";
-            }, 500);
-
-        }, 900);
+            mapRoll.style.display = "none";
+        }, 1000);
 
     }, 4000);
 }
 
-startMapRoll();
 
-
-// PLAYER ROBOT
+// ====================
+// ROBOT
+// ====================
 
 const robot = new THREE.Group();
 
-const robotMaterial = new THREE.MeshStandardMaterial({
+const blueMetal = new THREE.MeshStandardMaterial({
     color: 0x287cff,
     metalness: 0.8,
     roughness: 0.25
 });
 
-const darkMaterial = new THREE.MeshStandardMaterial({
+const darkMetal = new THREE.MeshStandardMaterial({
     color: 0x35485e,
     metalness: 0.8,
     roughness: 0.25
 });
 
-const metalMaterial = new THREE.MeshStandardMaterial({
+const silverMetal = new THREE.MeshStandardMaterial({
     color: 0x9bb0c7,
     metalness: 0.85,
     roughness: 0.2
 });
 
 
-// BODY
-
+// Body
 const body = new THREE.Mesh(
     new THREE.BoxGeometry(1.3, 1.4, 0.9),
-    robotMaterial
+    blueMetal
 );
 
 body.position.y = 1.3;
 robot.add(body);
 
 
-// HEAD
-
+// Head
 const head = new THREE.Mesh(
     new THREE.SphereGeometry(0.55, 16, 12),
-    metalMaterial
+    silverMetal
 );
 
 head.position.y = 2.4;
 robot.add(head);
 
 
-// EYES
-
+// Glowing eyes
 const eyeMaterial = new THREE.MeshStandardMaterial({
     color: 0x66ddff,
     emissive: 0x2299ff,
     emissiveIntensity: 3
 });
 
-const leftEye = new THREE.Mesh(
-    new THREE.BoxGeometry(0.16, 0.13, 0.08),
-    eyeMaterial
-);
+for (const x of [-0.2, 0.2]) {
 
-leftEye.position.set(-0.2, 2.45, 0.5);
-robot.add(leftEye);
+    const eye = new THREE.Mesh(
+        new THREE.BoxGeometry(0.16, 0.13, 0.08),
+        eyeMaterial
+    );
 
-const rightEye = new THREE.Mesh(
-    new THREE.BoxGeometry(0.16, 0.13, 0.08),
-    eyeMaterial
-);
-
-rightEye.position.set(0.2, 2.45, 0.5);
-robot.add(rightEye);
+    eye.position.set(x, 2.45, 0.5);
+    robot.add(eye);
+}
 
 
-// SHOULDERS
+// Arms
+for (const x of [-0.9, 0.9]) {
 
-const leftShoulder = new THREE.Mesh(
-    new THREE.SphereGeometry(0.24, 12, 8),
-    darkMaterial
-);
+    const arm = new THREE.Mesh(
+        new THREE.CapsuleGeometry(0.16, 0.7, 4, 8),
+        darkMetal
+    );
 
-leftShoulder.position.set(-0.82, 1.75, 0);
-robot.add(leftShoulder);
-
-const rightShoulder = new THREE.Mesh(
-    new THREE.SphereGeometry(0.24, 12, 8),
-    darkMaterial
-);
-
-rightShoulder.position.set(0.82, 1.75, 0);
-robot.add(rightShoulder);
+    arm.position.set(x, 1.25, 0);
+    robot.add(arm);
+}
 
 
-// ARMS
+// Legs
+for (const x of [-0.35, 0.35]) {
 
-const leftArm = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.16, 0.7, 4, 8),
-    darkMaterial
-);
+    const leg = new THREE.Mesh(
+        new THREE.CapsuleGeometry(0.18, 0.7, 4, 8),
+        darkMetal
+    );
 
-leftArm.position.set(-0.9, 1.2, 0);
-robot.add(leftArm);
-
-const rightArm = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.16, 0.7, 4, 8),
-    darkMaterial
-);
-
-rightArm.position.set(0.9, 1.2, 0);
-robot.add(rightArm);
+    leg.position.set(x, 0.35, 0);
+    robot.add(leg);
+}
 
 
-// LEGS
+// Feet
+for (const x of [-0.35, 0.35]) {
 
-const leftLeg = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.18, 0.7, 4, 8),
-    darkMaterial
-);
+    const foot = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.25, 0.7),
+        darkMetal
+    );
 
-leftLeg.position.set(-0.35, 0.35, 0);
-robot.add(leftLeg);
-
-const rightLeg = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.18, 0.7, 4, 8),
-    darkMaterial
-);
-
-rightLeg.position.set(0.35, 0.35, 0);
-robot.add(rightLeg);
-
-
-// FEET
-
-const leftFoot = new THREE.Mesh(
-    new THREE.BoxGeometry(0.5, 0.25, 0.7),
-    darkMaterial
-);
-
-leftFoot.position.set(-0.35, -0.05, 0.12);
-robot.add(leftFoot);
-
-const rightFoot = new THREE.Mesh(
-    new THREE.BoxGeometry(0.5, 0.25, 0.7),
-    darkMaterial
-);
-
-rightFoot.position.set(0.35, -0.05, 0.12);
-robot.add(rightFoot);
-
-
-// ROBOT POSITION
+    foot.position.set(x, -0.05, 0.12);
+    robot.add(foot);
+}
 
 robot.position.set(0, 0, 0);
 scene.add(robot);
 
 
+// ====================
 // ANIMATION
+// ====================
 
 function animate() {
 
     requestAnimationFrame(animate);
 
-    robot.rotation.y += 0.003;
+    // Robot idle animation
+    robot.rotation.y += 0.004;
 
     renderer.render(scene, camera);
 }
@@ -340,7 +241,9 @@ function animate() {
 animate();
 
 
+// ====================
 // RESIZE
+// ====================
 
 window.addEventListener("resize", () => {
 
