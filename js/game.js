@@ -190,3 +190,71 @@ for (const x of [-0.35, 0.35]) {
 
 robot.position.set(0, 0, 0);
 scene.add(robot);
+// PLAYER ROBOT - UPGRADED
+const robot = new THREE.Group();
+
+const robotBody = new THREE.Mesh(
+    new THREE.BoxGeometry(1.3, 1.4, 0.9),
+    new THREE.MeshStandardMaterial({
+        color: 0x287cff,
+        metalness: 0.8,
+        roughness: 0.25
+    })
+);
+robotBody.position.y = 1.3;
+robot.add(robotBody);
+
+const robotHead = new THREE.Mesh(
+    new THREE.SphereGeometry(0.55, 16, 12),
+    new THREE.MeshStandardMaterial({
+        color: 0x9bb0c7,
+        metalness: 0.85,
+        roughness: 0.2
+    })
+);
+robotHead.position.y = 2.45;
+robot.add(robotHead);
+
+const eyeMaterial = new THREE.MeshStandardMaterial({
+    color: 0x66ddff,
+    emissive: 0x2299ff,
+    emissiveIntensity: 3
+});
+
+for (const x of [-0.2, 0.2]) {
+    const eye = new THREE.Mesh(
+        new THREE.BoxGeometry(0.14, 0.12, 0.08),
+        eyeMaterial
+    );
+    eye.position.set(x, 2.48, 0.5);
+    robot.add(eye);
+}
+
+for (const x of [-0.85, 0.85]) {
+    const arm = new THREE.Mesh(
+        new THREE.CapsuleGeometry(0.16, 0.7, 4, 8),
+        new THREE.MeshStandardMaterial({
+            color: 0x465b73,
+            metalness: 0.8,
+            roughness: 0.25
+        })
+    );
+    arm.position.set(x, 1.3, 0);
+    robot.add(arm);
+}
+
+for (const x of [-0.35, 0.35]) {
+    const leg = new THREE.Mesh(
+        new THREE.CapsuleGeometry(0.18, 0.7, 4, 8),
+        new THREE.MeshStandardMaterial({
+            color: 0x35485e,
+            metalness: 0.8,
+            roughness: 0.25
+        })
+    );
+    leg.position.set(x, 0.35, 0);
+    robot.add(leg);
+}
+
+robot.position.set(0, 0, 0);
+scene.add(robot);
