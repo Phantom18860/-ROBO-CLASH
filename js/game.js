@@ -139,3 +139,11 @@ const playerRobot = new THREE.Mesh(
 
 playerRobot.position.set(0, 0.75, 0);
 scene.add(playerRobot);
+// SHOW GAME AFTER MAP SELECTION
+setTimeout(() => {
+    const mapRoll = document.getElementById("map-roll");
+
+    if (mapRoll) {
+        mapRoll.classList.add("hidden");
+    }
+}, 4100);
