@@ -95,3 +95,32 @@ window.addEventListener("resize", () => {
         window.innerHeight
     );
 });
+// MAP ROLLER
+setTimeout(() => {
+    const mapName = document.getElementById("map-name");
+    const mapDescription = document.getElementById("map-description");
+    const status = document.querySelector(".roll-status");
+
+    if (!mapName || !mapDescription || typeof MAPS === "undefined") return;
+
+    let i = 0;
+
+    const roller = setInterval(() => {
+        const map = MAPS[i % MAPS.length];
+
+        mapName.textContent = map.name;
+        mapDescription.textContent = map.description;
+
+        i++;
+    }, 120);
+
+    setTimeout(() => {
+        clearInterval(roller);
+
+        const chosen = MAPS[Math.floor(Math.random() * MAPS.length)];
+
+        mapName.textContent = chosen.name;
+        mapDescription.textContent = chosen.description;
+        status.textContent = "SELECTED MAP";
+    }, 4000);
+}, 100);
