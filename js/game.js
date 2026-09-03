@@ -124,21 +124,7 @@ setTimeout(() => {
         status.textContent = "SELECTED MAP";
     }, 4000);
 }, 100);
-// PLAYER ROBOT
-const robotGeometry = new THREE.BoxGeometry(1, 1.5, 1);
-const robotMaterial = new THREE.MeshStandardMaterial({
-    color: 0x287cff,
-    metalness: 0.8,
-    roughness: 0.3
-});
 
-const playerRobot = new THREE.Mesh(
-    robotGeometry,
-    robotMaterial
-);
-
-playerRobot.position.set(0, 0.75, 0);
-scene.add(playerRobot);
 // SHOW GAME AFTER MAP SELECTION
 setTimeout(() => {
     const mapRoll = document.getElementById("map-roll");
@@ -147,3 +133,60 @@ setTimeout(() => {
         mapRoll.classList.add("hidden");
     }
 }, 4100);
+// REAL ROBOT
+const robot = new THREE.Group();
+
+// Body
+const body = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 1.4, 0.8),
+    new THREE.MeshStandardMaterial({ color: 0x287cff, metalness: 0.7, roughness: 0.3 })
+);
+body.position.y = 1.2;
+robot.add(body);
+
+// Head
+const head = new THREE.Mesh(
+    new THREE.BoxGeometry(0.9, 0.7, 0.75),
+    new THREE.MeshStandardMaterial({ color: 0x8aa4c4, metalness: 0.8, roughness: 0.25 })
+);
+head.position.y = 2.25;
+robot.add(head);
+
+// Eyes
+const eyeMaterial = new THREE.MeshStandardMaterial({
+    color: 0x66ccff,
+    emissive: 0x2299ff,
+    emissiveIntensity: 2
+});
+
+for (const x of [-0.22, 0.22]) {
+    const eye = new THREE.Mesh(
+        new THREE.BoxGeometry(0.16, 0.16, 0.08),
+        eyeMaterial
+    );
+    eye.position.set(x, 2.3, 0.39);
+    robot.add(eye);
+}
+
+// Arms
+for (const x of [-0.85, 0.85]) {
+    const arm = new THREE.Mesh(
+        new THREE.BoxGeometry(0.3, 1.2, 0.35),
+        new THREE.MeshStandardMaterial({ color: 0x465b73, metalness: 0.7 })
+    );
+    arm.position.set(x, 1.25, 0);
+    robot.add(arm);
+}
+
+// Legs
+for (const x of [-0.35, 0.35]) {
+    const leg = new THREE.Mesh(
+        new THREE.BoxGeometry(0.35, 1, 0.45),
+        new THREE.MeshStandardMaterial({ color: 0x35485e, metalness: 0.7 })
+    );
+    leg.position.set(x, 0.3, 0);
+    robot.add(leg);
+}
+
+robot.position.set(0, 0, 0);
+scene.add(robot);
