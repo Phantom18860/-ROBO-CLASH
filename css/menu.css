@@ -135,3 +135,40 @@ body {
         transform: translateY(-8px);
     }
 }
+.game-logo {
+    animation:
+        logoFloat 3s ease-in-out infinite,
+        logoPulse 1.8s ease-in-out infinite;
+}
+
+.menu-button.primary {
+    animation: playGlow 1.4s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+    0%, 100% {
+        filter:
+            drop-shadow(0 0 12px #287cff)
+            drop-shadow(0 0 30px rgba(40, 124, 255, 0.5));
+    }
+
+    50% {
+        filter:
+            drop-shadow(0 0 22px #63c7ff)
+            drop-shadow(0 0 55px rgba(40, 124, 255, 0.9));
+    }
+}
+
+@keyframes playGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 12px #287cff,
+            0 0 25px rgba(40, 124, 255, 0.45);
+    }
+
+    50% {
+        box-shadow:
+            0 0 22px #63c7ff,
+            0 0 50px rgba(40, 124, 255, 0.9);
+    }
+}
