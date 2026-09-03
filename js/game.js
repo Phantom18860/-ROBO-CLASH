@@ -124,3 +124,18 @@ setTimeout(() => {
         status.textContent = "SELECTED MAP";
     }, 4000);
 }, 100);
+// PLAYER ROBOT
+const robotGeometry = new THREE.BoxGeometry(1, 1.5, 1);
+const robotMaterial = new THREE.MeshStandardMaterial({
+    color: 0x287cff,
+    metalness: 0.8,
+    roughness: 0.3
+});
+
+const playerRobot = new THREE.Mesh(
+    robotGeometry,
+    robotMaterial
+);
+
+playerRobot.position.set(0, 0.75, 0);
+scene.add(playerRobot);
