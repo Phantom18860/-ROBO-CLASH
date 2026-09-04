@@ -116,111 +116,469 @@ if (mapRoll && mapName && mapDescription && rollStatus) {
 
     }, 4000);
 }
-
-
 // ====================
-// ROBOT
+// ROBO CLASH ROBOT
 // ====================
 
 const robot = new THREE.Group();
 
-const blueMetal = new THREE.MeshStandardMaterial({
+// ---------- MATERIALS ----------
+
+const armorBlue = new THREE.MeshStandardMaterial({
     color: 0x287cff,
-    metalness: 0.8,
-    roughness: 0.25
+    metalness: 0.9,
+    roughness: 0.22
 });
 
-const darkMetal = new THREE.MeshStandardMaterial({
-    color: 0x35485e,
-    metalness: 0.8,
-    roughness: 0.25
-});
-
-const silverMetal = new THREE.MeshStandardMaterial({
-    color: 0x9bb0c7,
+const armorDark = new THREE.MeshStandardMaterial({
+    color: 0x17243a,
     metalness: 0.85,
+    roughness: 0.3
+});
+
+const armorSilver = new THREE.MeshStandardMaterial({
+    color: 0xb8c7d9,
+    metalness: 0.95,
+    roughness: 0.18
+});
+
+const black = new THREE.MeshStandardMaterial({
+    color: 0x05070c,
+    metalness: 0.5,
+    roughness: 0.15
+});
+
+const glowBlue = new THREE.MeshStandardMaterial({
+    color: 0x55ddff,
+    emissive: 0x168cff,
+    emissiveIntensity: 5,
+    metalness: 0.2,
     roughness: 0.2
 });
 
 
-// Body
-const body = new THREE.Mesh(
-    new THREE.BoxGeometry(1.3, 1.4, 0.9),
-    blueMetal
+// ---------- HELPER ----------
+
+function addBox(
+    parent,
+    x, y, z,
+    sx, sy, sz,
+    material,
+    name
+) {
+    const mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(sx, sy, sz),
+        material
+    );
+
+    mesh.position.set(x, y, z);
+
+    if (name) mesh.name = name;
+
+    parent.add(mesh);
+
+    return mesh;
+}
+
+
+// ====================
+// BODY
+// ====================
+
+// Main torso
+const torso = addBox(
+    robot,
+    0, 1.9, 0,
+    2.6, 2.8, 1.8,
+    armorBlue,
+    "Armored Torso"
 );
 
-body.position.y = 1.3;
-robot.add(body);
-
-
-// Head
-const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.55, 16, 12),
-    silverMetal
+// Dark chest plate
+addBox(
+    robot,
+    0, 2.05, -0.94,
+    1.8, 1.45, 0.18,
+    armorDark,
+    "Chest Plate"
 );
 
-head.position.y = 2.4;
+// Chest reactor
+const reactor = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.32, 0.32, 0.12, 24),
+    glowBlue
+);
+
+reactor.rotation.x = Math.PI / 2;
+reactor.position.set(0, 2.15, -1.05);
+robot.add(reactor);
+
+// Small chest armor strips
+for (const x of [-0.72, 0.72]) {
+    addBox(
+        robot,
+        x, 2.15, -1.06,
+        0.18, 0.9, 0.12,
+        armorSilver
+    );
+}
+
+
+// ====================
+// NECK
+// ====================
+
+const neck = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.42, 0.42, 0.35, 16),
+    armorDark
+);
+
+neck.position.y = 3.45;
+robot.add(neck);
+
+
+// ====================
+// HEAD
+// ====================
+
+const head = new THREE.Group();
+head.name = "Helmet";
+head.position.set(0, 4.25, 0);
 robot.add(head);
 
+// Main helmet
+const helmet = new THREE.Mesh(
+    new THREE.SphereGeometry(0.95, 24, 18),
+    armorSilver
+);
 
-// Glowing eyes
-const eyeMaterial = new THREE.MeshStandardMaterial({
-    color: 0x66ddff,
-    emissive: 0x2299ff,
-    emissiveIntensity: 3
-});
+helmet.scale.set(1.15, 0.9, 1.05);
+head.add(helmet);
 
-for (const x of [-0.2, 0.2]) {
+// Helmet armor shell
+const helmetShell = new THREE.Mesh(
+    new THREE.SphereGeometry(1.0, 24, 16),
+    armorBlue
+);
+
+helmetShell.scale.set(1.17, 0.93, 1.08);
+helmetShell.position.y = 0.08;
+head.add(helmetShell);
+
+
+// ====================
+// FACE VISOR
+// ====================
+
+const visor = new THREE.Mesh(
+    new THREE.BoxGeometry(1.45, 0.52, 0.16),
+    black
+);
+
+visor.position.set(0, -0.05, -1.0);
+head.add(visor);
+
+
+// Visor glass
+const visorGlass = new THREE.Mesh(
+    new THREE.BoxGeometry(1.28, 0.34, 0.08),
+    new THREE.MeshStandardMaterial({
+        color: 0x07111d,
+        emissive: 0x03182b,
+        emissiveIntensity: 1,
+        metalness: 0.7,
+        roughness: 0.08
+    })
+);
+
+visorGlass.position.set(0, -0.05, -1.1);
+head.add(visorGlass);
+
+
+// ====================
+// GLOWING EYES
+// ====================
+
+for (const x of [-0.32, 0.32]) {
 
     const eye = new THREE.Mesh(
-        new THREE.BoxGeometry(0.16, 0.13, 0.08),
-        eyeMaterial
+        new THREE.BoxGeometry(0.27, 0.12, 0.08),
+        glowBlue
     );
 
-    eye.position.set(x, 2.45, 0.5);
-    robot.add(eye);
+    eye.position.set(x, -0.05, -1.17);
+
+    head.add(eye);
 }
 
 
-// Arms
-for (const x of [-0.9, 0.9]) {
+// ====================
+// THUG LIFE GLASSES 😎
+// ====================
 
-    const arm = new THREE.Mesh(
-        new THREE.CapsuleGeometry(0.16, 0.7, 4, 8),
-        darkMetal
+const glasses = new THREE.Group();
+glasses.name = "THUG LIFE GLASSES";
+head.add(glasses);
+
+// Left lens
+const leftLens = new THREE.Mesh(
+    new THREE.BoxGeometry(0.58, 0.34, 0.10),
+    black
+);
+
+leftLens.position.set(-0.34, -0.05, -1.22);
+leftLens.rotation.z = -0.05;
+glasses.add(leftLens);
+
+// Right lens
+const rightLens = new THREE.Mesh(
+    new THREE.BoxGeometry(0.58, 0.34, 0.10),
+    black
+);
+
+rightLens.position.set(0.34, -0.05, -1.22);
+rightLens.rotation.z = 0.05;
+glasses.add(rightLens);
+
+// Bridge
+addBox(
+    glasses,
+    0, -0.05, -1.25,
+    0.22, 0.08, 0.08,
+    armorSilver,
+    "Glasses Bridge"
+);
+
+// Glasses shine
+const shineMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    emissive: 0x333333,
+    emissiveIntensity: 1
+});
+
+addBox(
+    glasses,
+    -0.46, 0.02, -1.28,
+    0.10, 0.05, 0.04,
+    shineMaterial
+);
+
+addBox(
+    glasses,
+    0.22, 0.02, -1.28,
+    0.10, 0.05, 0.04,
+    shineMaterial
+);
+
+// Side arms of glasses
+addBox(
+    glasses,
+    -0.92, -0.05, -1.0,
+    0.45, 0.07, 0.07,
+    black
+);
+
+addBox(
+    glasses,
+    0.92, -0.05, -1.0,
+    0.45, 0.07, 0.07,
+    black
+);
+
+
+// ====================
+// HEAD ANTENNA
+// ====================
+
+const antenna = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.055, 0.055, 0.55, 10),
+    armorDark
+);
+
+antenna.position.set(0, 1.0, 0);
+head.add(antenna);
+
+const antennaLight = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 12, 8),
+    glowBlue
+);
+
+antennaLight.position.set(0, 1.3, 0);
+head.add(antennaLight);
+
+
+// ====================
+// SHOULDERS
+// ====================
+
+for (const x of [-1.65, 1.65]) {
+
+    const shoulder = new THREE.Mesh(
+        new THREE.SphereGeometry(0.62, 18, 12),
+        armorBlue
     );
 
-    arm.position.set(x, 1.25, 0);
-    robot.add(arm);
+    shoulder.scale.set(1.15, 0.8, 1.0);
+    shoulder.position.set(x, 2.75, 0);
+
+    robot.add(shoulder);
 }
 
 
-// Legs
-for (const x of [-0.35, 0.35]) {
+// ====================
+// ARMS
+// ====================
 
-    const leg = new THREE.Mesh(
-        new THREE.CapsuleGeometry(0.18, 0.7, 4, 8),
-        darkMetal
+for (const x of [-1.75, 1.75]) {
+
+    // Upper arm
+    addBox(
+        robot,
+        x, 2.0, 0,
+        0.62, 1.35, 0.72,
+        armorDark,
+        x < 0 ? "Left Arm" : "Right Arm"
     );
 
-    leg.position.set(x, 0.35, 0);
-    robot.add(leg);
+    // Elbow
+    const elbow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.3, 16, 12),
+        armorSilver
+    );
+
+    elbow.position.set(x, 1.25, 0);
+    robot.add(elbow);
+
+    // Forearm
+    addBox(
+        robot,
+        x, 0.75, -0.05,
+        0.72, 1.0, 0.8,
+        armorBlue
+    );
+
+    // Hand
+    addBox(
+        robot,
+        x, 0.05, -0.12,
+        0.72, 0.45, 0.7,
+        armorDark
+    );
 }
 
 
-// Feet
-for (const x of [-0.35, 0.35]) {
+// ====================
+// LEGS
+// ====================
 
-    const foot = new THREE.Mesh(
-        new THREE.BoxGeometry(0.5, 0.25, 0.7),
-        darkMetal
+for (const x of [-0.65, 0.65]) {
+
+    // Hip joint
+    const hip = new THREE.Mesh(
+        new THREE.SphereGeometry(0.32, 16, 12),
+        armorDark
     );
 
-    foot.position.set(x, -0.05, 0.12);
-    robot.add(foot);
+    hip.position.set(x, 0.65, 0);
+    robot.add(hip);
+
+    // Upper leg
+    addBox(
+        robot,
+        x, 0.25, 0,
+        0.85, 1.25, 0.9,
+        armorBlue
+    );
+
+    // Knee
+    const knee = new THREE.Mesh(
+        new THREE.SphereGeometry(0.27, 16, 12),
+        armorSilver
+    );
+
+    knee.position.set(x, -0.45, -0.05);
+    robot.add(knee);
+
+    // Lower leg
+    addBox(
+        robot,
+        x, -1.0, 0,
+        0.8, 1.0, 0.85,
+        armorDark
+    );
+
+    // Big armored foot
+    addBox(
+        robot,
+        x, -1.65, -0.18,
+        1.0, 0.5, 1.35,
+        armorSilver
+    );
+
+    // Blue foot armor
+    addBox(
+        robot,
+        x, -1.62, -0.78,
+        0.8, 0.28, 0.25,
+        armorBlue
+    );
 }
 
-robot.position.set(0, 0, 0);
+
+// ====================
+// WEAPON
+// ====================
+
+const weapon = new THREE.Group();
+weapon.name = "Blaster";
+weapon.position.set(2.35, 0.8, -0.2);
+weapon.rotation.z = -0.12;
+
+robot.add(weapon);
+
+// Main weapon body
+addBox(
+    weapon,
+    0, 0, 0,
+    0.65, 1.7, 0.75,
+    armorDark
+);
+
+// Barrel
+const barrel = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.17, 0.17, 1.25, 16),
+    armorSilver
+);
+
+barrel.rotation.z = Math.PI / 2;
+barrel.position.x = 0.95;
+weapon.add(barrel);
+
+// Energy core
+const weaponCore = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.22, 0.22, 0.22, 16),
+    glowBlue
+);
+
+weaponCore.rotation.z = Math.PI / 2;
+weaponCore.position.x = 1.55;
+weapon.add(weaponCore);
+
+// Handle
+addBox(
+    weapon,
+    -0.05, -0.95, 0,
+    0.4, 0.8, 0.5,
+    armorBlue
+);
+
+
+// ====================
+// FINAL ROBOT POSITION
+// ====================
+
+robot.position.set(0, 1.8, 0);
+
 scene.add(robot);
 
 
@@ -232,13 +590,16 @@ function animate() {
 
     requestAnimationFrame(animate);
 
-    // Robot idle animation
+    // Subtle robot idle motion
     robot.rotation.y += 0.004;
-updateCamera();
+
+    updateCamera();
+
     renderer.render(scene, camera);
 }
 
 animate();
+
 
 
 // ====================
