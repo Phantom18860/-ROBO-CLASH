@@ -52,6 +52,52 @@
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script src="js/maps.js"></script>
+<script>
+const rollerMaps = [
+    ["NEON CITY", "A futuristic city packed with cover."],
+    ["ROBOT FACTORY", "An industrial battlefield filled with machinery."],
+    ["LAVA CORE", "A dangerous arena surrounding a molten reactor."],
+    ["FROST BASE", "A frozen military base built for combat."],
+    ["SCRAP DESERT", "A battlefield filled with abandoned machines."]
+];
 
+const rollName = document.getElementById("map-name");
+const rollDescription = document.getElementById("map-description");
+const rollScreen = document.getElementById("map-roll");
+const rollStatus = document.querySelector(".roll-status");
+
+let rollNumber = 0;
+
+if (rollName && rollDescription && rollScreen) {
+
+    const rollTimer = setInterval(() => {
+        const map = rollerMaps[rollNumber % rollerMaps.length];
+
+        rollName.textContent = map[0];
+        rollDescription.textContent = map[1];
+
+        rollNumber++;
+    }, 120);
+
+    setTimeout(() => {
+        clearInterval(rollTimer);
+
+        const chosen =
+            rollerMaps[Math.floor(Math.random() * rollerMaps.length)];
+
+        rollName.textContent = chosen[0];
+        rollDescription.textContent = chosen[1];
+
+        if (rollStatus) {
+            rollStatus.textContent = "SELECTED MAP";
+        }
+
+        setTimeout(() => {
+            rollScreen.style.display = "none";
+        }, 1000);
+
+    }, 4000);
+}
+</script>
 </body>
 </html>
