@@ -234,7 +234,7 @@ function animate() {
 
     // Robot idle animation
     robot.rotation.y += 0.004;
-
+updateCamera();
     renderer.render(scene, camera);
 }
 
@@ -257,3 +257,53 @@ window.addEventListener("resize", () => {
         window.innerHeight
     );
 });
+// ====================
+// MOUSE CAMERA CONTROL
+// ====================
+
+const gameCanvas = renderer.domElement;
+
+let cameraYaw = 0;
+let cameraPitch = -0.35;
+
+gameCanvas.addEventListener("click", () => {
+    gameCanvas.requestPointerLock();
+});
+
+document.addEventListener("mousemove", (event) => {
+
+    if (document.pointerLockElement !== gameCanvas) {
+        return;
+    }
+
+    cameraYaw -= event.movementX * 0.0025;
+    cameraPitch -= event.movementY * 0.0025;
+
+    cameraPitch = Math.max(
+        -1.2,
+        Math.min(0.5, cameraPitch)
+    );
+});
+
+function updateCamera() {
+
+    const distance = 9;
+
+    const cameraX =
+        robot.position.x - Math.sin(cameraYaw) * distance;
+
+    const cameraZ =
+        robot.position.z - Math.cos(cameraYaw) * distance;
+
+    camera.position.x = cameraX;
+    camera.position.z = cameraZ;
+
+    camera.position.y =
+        robot.position.y + 5 - cameraPitch * 3;
+
+    camera.lookAt(
+        robot.position.x,
+        robot.position.y + 1.2,
+        robot.position.z
+    );
+}
