@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ROBO CLASH - ROOMS</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+
+<body>
+
+<main class="menu-screen">
+
+    <h1>ROOMS</h1>
+
+    <div class="menu-buttons">
+
+        <button class="menu-button primary" id="createRoom">
+            CREATE ROOM
+        </button>
+
+        <button class="menu-button" id="joinRoom">
+            JOIN ROOM
+        </button>
+
+        <a class="menu-button" href="index.html">
+            BACK
+        </a>
+
+    </div>
+
+    <div id="roomPanel" style="display:none;">
+
+        <h2>ROOM CREATED</h2>
+
+        <p>ROOM CODE</p>
+
+        <div id="roomCode">
+            ------
+        </div>
+
+        <p id="roomPlayers">
+            PLAYERS: 1
+        </p>
+
+        <button class="menu-button primary" id="startGame">
+            START BATTLE
+        </button>
+
+    </div>
+
+</main>
+
+<script>
+
+const createRoom =
+    document.getElementById("createRoom");
+
+const joinRoom =
+    document.getElementById("joinRoom");
+
+const roomPanel =
+    document.getElementById("roomPanel");
+
+const roomCode =
+    document.getElementById("roomCode");
+
+const roomPlayers =
+    document.getElementById("roomPlayers");
+
+const startGame =
+    document.getElementById("startGame");
+
+
+function generateRoomCode() {
+
+    const characters =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let code = "";
+
+    for (let i = 0; i < 6; i++) {
+
+        code +=
+            characters[
+                Math.floor(
+                    Math.random() *
+                    characters.length
+                )
+            ];
+
+    }
+
+    return code;
+}
+
+
+createRoom.addEventListener("click", () => {
+
+    const code =
+        generateRoomCode();
+
+    roomCode.textContent =
+        code;
+
+    roomPlayers.textContent =
+        "PLAYERS: 1";
+
+    roomPanel.style.display =
+        "block";
+
+    createRoom.style.display =
+        "none";
+
+    joinRoom.style.display =
+        "none";
+
+});
+
+
+startGame.addEventListener("click", () => {
+
+    window.location.href =
+        "game.html";
+
+});
+
+
+joinRoom.addEventListener("click", () => {
+
+    const code =
+        prompt("ENTER ROOM CODE:");
+
+    if (!code) return;
+
+    roomCode.textContent =
+        code.toUpperCase();
+
+    roomPlayers.textContent =
+        "PLAYERS: 1";
+
+    roomPanel.style.display =
+        "block";
+
+    createRoom.style.display =
+        "none";
+
+    joinRoom.style.display =
+        "none";
+
+});
+
+</script>
+
+</body>
+</html>
