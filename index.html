@@ -3,35 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ROBO CLASH</title>
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/menu.css">
+
+    <style>
+        .coin-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(10, 20, 38, 0.9);
+            color: white;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .coin-button:hover {
+            transform: scale(1.05);
+        }
+
+        .coin-panel {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            padding: 15px 22px;
+            border-radius: 14px;
+            background: rgba(10, 20, 38, 0.95);
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            text-align: center;
+        }
+
+        .coin-panel.show {
+            display: block;
+        }
+
+        .coin-amount {
+            font-size: 32px;
+            font-weight: 900;
+        }
+    </style>
 </head>
+
+<body>
+
 <div class="menu-status">
     SYSTEM ONLINE
 </div>
-<body>
 
-    <main class="menu-screen">
+<button
+    class="coin-button"
+    id="coinButton"
+    type="button"
+>
+    🪙 <span id="coinCount">0</span>
+</button>
 
-        <img
-            class="game-logo"
-            src="assets/ChatGPT%20Image%20Sep%202%2C%202026%2C%2011_00_44%20AM.png"
-            alt="ROBO CLASH"
-        >
+<div
+    class="coin-panel"
+    id="coinPanel"
+>
+    <div>YOUR COINS</div>
+    <div class="coin-amount">
+        🪙 <span id="coinPanelCount">0</span>
+    </div>
+</div>
 
-        <div class="menu-buttons">
-            <a class="menu-button primary" href="game.html">PLAY</a>
-            <a class="menu-button" href="rooms.html">ROOMS</a>
-            <a class="menu-button" href="robots.html">ROBOTS</a>
-            <a class="menu-button" href="armory.html">ARMORY</a>
-            <a class="menu-button" href="customize.html">CUSTOMIZE</a>
-            <a class="menu-button" href="stats.html">STATS</a>
-            <a class="menu-button" href="settings.html">SETTINGS</a>
-        </div>
+<main class="menu-screen">
 
-    </main>
+    <img
+        class="game-logo"
+        src="assets/ChatGPT%20Image%20Sep%202%2C%202026%2C%2011_00_44%20AM.png"
+        alt="ROBO CLASH"
+    >
+
+    <div class="menu-buttons">
+
+        <a class="menu-button primary" href="game.html">PLAY</a>
+        <a class="menu-button" href="rooms.html">ROOMS</a>
+        <a class="menu-button" href="robots.html">ROBOTS</a>
+        <a class="menu-button" href="armory.html">ARMORY</a>
+        <a class="menu-button" href="customize.html">CUSTOMIZE</a>
+        <a class="menu-button" href="stats.html">STATS</a>
+        <a class="menu-button" href="settings.html">SETTINGS</a>
+
+    </div>
+
+</main>
+
+<script>
+
+    const coinButton =
+        document.getElementById("coinButton");
+
+    const coinPanel =
+        document.getElementById("coinPanel");
+
+    const coinCount =
+        document.getElementById("coinCount");
+
+    const coinPanelCount =
+        document.getElementById("coinPanelCount");
+
+
+    let coins = Number(
+        localStorage.getItem("roboClashCoins") || 0
+    );
+
+
+    function updateCoins() {
+
+        coinCount.textContent = coins;
+        coinPanelCount.textContent = coins;
+
+    }
+
+
+    coinButton.addEventListener(
+        "click",
+        () => {
+
+            coinPanel.classList.toggle("show");
+
+        }
+    );
+
+
+    updateCoins();
+
+</script>
 
 </body>
 </html>
