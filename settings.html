@@ -1,1 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>ROBO CLASH - SETTINGS</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menu.css">
+
+    <style>
+        .settings-page {
+            width: min(700px, 92%);
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        .settings-title {
+            font-size: clamp(42px, 9vw, 72px);
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin: 0 0 30px;
+            text-shadow: 0 0 18px rgba(70, 180, 255, 0.8);
+        }
+
+        .settings-list {
+            width: min(500px, 100%);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .setting {
+            min-height: 65px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            border-radius: 14px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(30, 70, 110, 0.45);
+        }
+
+        .setting-name {
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .toggle {
+            min-width: 95px;
+            min-height: 44px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(10, 20, 38, 0.8);
+            color: white;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .toggle.on {
+            background: rgba(40, 140, 255, 0.7);
+        }
+
+        .setting-button {
+            width: 100%;
+            min-height: 55px;
+            border-radius: 14px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(30, 70, 110, 0.45);
+            color: white;
+            font-size: 17px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .setting-button:hover,
+        .toggle:hover {
+            background: rgba(40, 100, 155, 0.65);
+        }
+
+        .status {
+            min-height: 20px;
+            margin-top: 18px;
+            opacity: 0.75;
+        }
+
+        .back-button {
+            display: block;
+            width: min(500px, 100%);
+            box-sizing: border-box;
+            margin: 18px auto 0;
+        }
+
+        @media (max-width: 500px) {
+            .setting {
+                padding: 10px 14px;
+            }
+
+            .setting-name {
+                font-size: 14px;
+            }
+
+            .toggle {
+                min-width: 85px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="settings-page">
+
+    <h1 class="settings-title">
+        SETTINGS
+    </h1>
+
+    <div class="settings-list">
+
+        <!-- SOUND -->
+
+        <div class="setting">
+
+            <div class="setting-name">
+                🔊 SOUND
+            </div>
+
+            <button
+                class="toggle"
+                id="soundToggle"
+                type="button"
+            >
+                ON
+            </button>
+
+        </div>
+
+
+        <!-- VIBRATION -->
+
+        <div class="setting">
+
+            <div class="setting-name">
+                📳 VIBRATION
+            </div>
+
+            <button
+                class="toggle"
+                id="vibrationToggle"
+                type="button"
+            >
+                ON
+            </button>
+
+        </div>
+
+
+        <!-- DARK MODE -->
+
+        <div class="setting">
+
+            <div class="setting-name">
+                🌙 DARK MODE
+            </div>
+
+            <button
+                class="toggle"
+                id="darkToggle"
+                type="button"
+            >
+                ON
+            </button>
+
+        </div>
+
+
+        <!-- FULLSCREEN -->
+
+        <div class="setting">
+
+            <div class="setting-name">
+                🖥️ FULLSCREEN
+            </div>
+
+            <button
+                class="toggle"
+                id="fullscreenToggle"
+                type="button"
+            >
+                OFF
+            </button>
+
+        </div>
+
+
+        <button
+            class="setting-button"
+            id="resetSettings"
+            type="button"
+        >
+            RESET SETTINGS
+        </button>
+
+    </div>
+
+    <div
+        class="status"
+        id="status"
+    ></div>
+
+    <a
+        class="menu-button back-button"
+        href="index.html"
+    >
+        ← BACK TO MENU
+    </a>
+
+</main>
+
+
+<script>
+
+    // =========================
+    // STORAGE HELPERS
+    // =========================
+
+    function getSetting(name, defaultValue) {
+
+        const saved =
+            localStorage.getItem(
+                "roboClash_" + name
+            );
+
+        if (saved === null) {
+            return defaultValue;
+        }
+
+        return saved === "true";
+
+    }
+
+
+    function saveSetting(name, value) {
+
+        localStorage.setItem(
+            "roboClash_" + name,
+            value
+        );
+
+    }
+
+
+    // =========================
+    // SOUND
+    // =========================
+
+    const soundToggle =
+        document.getElementById("soundToggle");
+
+    let sound =
+        getSetting("sound", true);
+
+
+    function updateSound() {
+
+        soundToggle.textContent =
+            sound ? "ON" : "OFF";
+
+        soundToggle.classList.toggle(
+            "on",
+            sound
+        );
+
+    }
+
+
+    soundToggle.addEventListener(
+        "click",
+        () => {
+
+            sound = !sound;
+
+            saveSetting(
+                "sound",
+                sound
+            );
+
+            updateSound();
+
+        }
+    );
+
+
+    updateSound();
+
+
+    // =========================
+    // VIBRATION
+    // =========================
+
+    const vibrationToggle =
+        document.getElementById(
+            "vibrationToggle"
+        );
+
+    let vibration =
+        getSetting("vibration", true);
+
+
+    function updateVibration() {
+
+        vibrationToggle.textContent =
+            vibration ? "ON" : "OFF";
+
+        vibrationToggle.classList.toggle(
+            "on",
+            vibration
+        );
+
+    }
+
+
+    vibrationToggle.addEventListener(
+        "click",
+        () => {
+
+            vibration = !vibration;
+
+            saveSetting(
+                "vibration",
+                vibration
+            );
+
+            updateVibration();
+
+        }
+    );
+
+
+    updateVibration();
+
+
+    // =========================
+    // DARK MODE
+    // =========================
+
+    const darkToggle =
+        document.getElementById(
+            "darkToggle"
+        );
+
+    let darkMode =
+        getSetting("darkMode", true);
+
+
+    function updateDarkMode() {
+
+        darkToggle.textContent =
+            darkMode ? "ON" : "OFF";
+
+        darkToggle.classList.toggle(
+            "on",
+            darkMode
+        );
+
+    }
+
+
+    darkToggle.addEventListener(
+        "click",
+        () => {
+
+            darkMode = !darkMode;
+
+            saveSetting(
+                "darkMode",
+                darkMode
+            );
+
+            updateDarkMode();
+
+        }
+    );
+
+
+    updateDarkMode();
+
+
+    // =========================
+    // FULLSCREEN
+    // =========================
+
+    const fullscreenToggle =
+        document.getElementById(
+            "fullscreenToggle"
+        );
+
+    let fullscreen =
+        getSetting(
+            "fullscreen",
+            false
+        );
+
+
+    function updateFullscreenButton() {
+
+        fullscreenToggle.textContent =
+            fullscreen ? "ON" : "OFF";
+
+        fullscreenToggle.classList.toggle(
+            "on",
+            fullscreen
+        );
+
+    }
+
+
+    fullscreenToggle.addEventListener(
+        "click",
+        async () => {
+
+            fullscreen = !fullscreen;
+
+            saveSetting(
+                "fullscreen",
+                fullscreen
+            );
+
+            updateFullscreenButton();
+
+
+            if (fullscreen) {
+
+                if (
+                    document.documentElement
+                        .requestFullscreen
+                ) {
+
+                    try {
+
+                        await document
+                            .documentElement
+                            .requestFullscreen();
+
+                    } catch (error) {
+
+                        fullscreen = false;
+
+                        saveSetting(
+                            "fullscreen",
+                            false
+                        );
+
+                        updateFullscreenButton();
+
+                    }
+
+                }
+
+            } else {
+
+                if (
+                    document.fullscreenElement &&
+                    document.exitFullscreen
+                ) {
+
+                    await document.exitFullscreen();
+
+                }
+
+            }
+
+        }
+    );
+
+
+    updateFullscreenButton();
+
+
+    // =========================
+    // RESET
+    // =========================
+
+    const resetSettings =
+        document.getElementById(
+            "resetSettings"
+        );
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    resetSettings.addEventListener(
+        "click",
+        () => {
+
+            localStorage.removeItem(
+                "roboClash_sound"
+            );
+
+            localStorage.removeItem(
+                "roboClash_vibration"
+            );
+
+            localStorage.removeItem(
+                "roboClash_darkMode"
+            );
+
+            localStorage.removeItem(
+                "roboClash_fullscreen"
+            );
+
+
+            sound = true;
+            vibration = true;
+            darkMode = true;
+            fullscreen = false;
+
+
+            updateSound();
+            updateVibration();
+            updateDarkMode();
+            updateFullscreenButton();
+
+
+            status.textContent =
+                "SETTINGS RESET!";
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
