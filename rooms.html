@@ -17,9 +17,8 @@
             padding-top: 25px;
         }
 
-        /* Room code ABOVE the ROOMS title */
         .room-code-top {
-            margin: 0 auto 12px;
+            margin-bottom: 15px;
         }
 
         .room-code-label {
@@ -30,20 +29,20 @@
         }
 
         #roomCode {
-            font-size: 54px;
+            font-size: 60px;
             font-weight: 900;
-            letter-spacing: 4px;
-            line-height: 1;
+            letter-spacing: 0;
+            line-height: 1.1;
             color: #65d8ff;
             text-shadow: 0 0 18px rgba(70, 190, 255, 0.8);
-            min-height: 58px;
+            min-height: 66px;
         }
 
         .rooms-title {
             font-size: clamp(42px, 9vw, 72px);
             font-weight: 900;
             letter-spacing: 5px;
-            margin: 10px 0 30px;
+            margin: 0 0 30px;
             text-shadow: 0 0 18px rgba(70, 180, 255, 0.8);
         }
 
@@ -94,12 +93,8 @@
             margin-top: 25px;
         }
 
-        #roomPanel h2 {
-            margin-bottom: 20px;
-        }
-
         .players-list {
-            margin-top: 15px;
+            margin: 15px 0;
         }
 
         .player-slot {
@@ -122,7 +117,6 @@
         }
 
         @media (max-width: 600px) {
-
             .room-actions {
                 grid-template-columns: 1fr;
             }
@@ -142,7 +136,8 @@
 
 <main class="rooms-page">
 
-    <!-- BIG ROOM CODE AT THE TOP -->
+    <!-- BIG ROOM CODE ABOVE ROOMS -->
+
     <div class="room-code-top">
 
         <div class="room-code-label">
@@ -155,10 +150,11 @@
 
     </div>
 
-    <!-- ROOMS TITLE -->
+
     <h1 class="rooms-title">
         ROOMS
     </h1>
+
 
     <section class="rooms-card">
 
@@ -182,22 +178,24 @@
 
         </div>
 
-        <div id="roomPanel" style="display:none;">
 
-            <h2>ROBO CLASH PARTY</h2>
+        <div
+            id="roomPanel"
+            style="display:none;"
+        >
+
+            <h2>
+                ROBO CLASH PARTY
+            </h2>
 
             <p id="roomPlayers">
-                PLAYERS: 1
+                PLAYERS: 0
             </p>
 
             <div
                 class="players-list"
                 id="playersList"
-            >
-                <div class="player-slot">
-                    🤖 PLAYER 1
-                </div>
-            </div>
+            ></div>
 
             <button
                 class="room-action primary"
@@ -209,9 +207,11 @@
 
         </div>
 
+
         <p id="message">
             Create a room or join a party.
         </p>
+
 
         <a
             class="menu-button back-button"
@@ -225,32 +225,104 @@
 </main>
 
 
-<script>
+<script type="module">
+
+    import { createClient }
+        from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+    // =========================
+    // SUPABASE
+    // =========================
+
+    const SUPABASE_URL =
+        "https://kcvgqdwquzvpnvfxcinc.supabase.co";
+
+    const SUPABASE_KEY =
+        "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+
+    const supabase =
+        createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    // =========================
+    // PLAYER ID
+    // =========================
+
+    let playerId =
+        sessionStorage.getItem(
+            "roboClashPlayerId"
+        );
+
+    if (!playerId) {
+
+        playerId =
+            crypto.randomUUID();
+
+        sessionStorage.setItem(
+            "roboClashPlayerId",
+            playerId
+        );
+    }
+
+
+    let currentRoom = null;
+    let isHost = false;
+    let roomChannel = null;
+
+
+    // =========================
+    // ELEMENTS
+    // =========================
 
     const createRoom =
-        document.getElementById("createRoom");
+        document.getElementById(
+            "createRoom"
+        );
 
     const joinRoom =
-        document.getElementById("joinRoom");
+        document.getElementById(
+            "joinRoom"
+        );
 
     const roomPanel =
-        document.getElementById("roomPanel");
+        document.getElementById(
+            "roomPanel"
+        );
 
     const roomCode =
-        document.getElementById("roomCode");
+        document.getElementById(
+            "roomCode"
+        );
 
     const roomPlayers =
-        document.getElementById("roomPlayers");
+        document.getElementById(
+            "roomPlayers"
+        );
 
     const playersList =
-        document.getElementById("playersList");
+        document.getElementById(
+            "playersList"
+        );
 
     const startGame =
-        document.getElementById("startGame");
+        document.getElementById(
+            "startGame"
+        );
 
     const message =
-        document.getElementById("message");
+        document.getElementById(
+            "message"
+        );
 
+
+    // =========================
+    // ROOM CODE GENERATOR
+    // =========================
 
     function generateRoomCode() {
 
@@ -261,12 +333,13 @@
 
         for (let i = 0; i < 6; i++) {
 
-            code += characters[
-                Math.floor(
-                    Math.random() *
-                    characters.length
-                )
-            ];
+            code +=
+                characters[
+                    Math.floor(
+                        Math.random() *
+                        characters.length
+                    )
+                ];
 
         }
 
@@ -274,71 +347,443 @@
     }
 
 
-    function showRoom(code) {
+    // =========================
+    // SHOW MESSAGE
+    // =========================
 
-        roomCode.textContent = code;
+    function showMessage(text) {
 
-        roomPanel.style.display = "block";
-
-        createRoom.style.display = "none";
-
-        joinRoom.style.display = "none";
+        message.textContent = text;
 
     }
 
 
+    // =========================
+    // DISPLAY ROOM
+    // =========================
+
+    function showRoom() {
+
+        roomPanel.style.display =
+            "block";
+
+        createRoom.style.display =
+            "none";
+
+        joinRoom.style.display =
+            "none";
+
+    }
+
+
+    // =========================
+    // DISPLAY PLAYERS
+    // =========================
+
+    function displayPlayers(players) {
+
+        roomPlayers.textContent =
+            "PLAYERS: " + players.length;
+
+        playersList.innerHTML = "";
+
+        players.forEach(
+            (player, index) => {
+
+                const playerSlot =
+                    document.createElement(
+                        "div"
+                    );
+
+                playerSlot.className =
+                    "player-slot";
+
+                playerSlot.textContent =
+                    "🤖 PLAYER " +
+                    (index + 1) +
+                    (player.host
+                        ? " • HOST"
+                        : "");
+
+                playersList.appendChild(
+                    playerSlot
+                );
+
+            }
+        );
+
+    }
+
+
+    // =========================
+    // SUBSCRIBE TO ROOM
+    // =========================
+
+    function subscribeToRoom(code) {
+
+        if (roomChannel) {
+
+            supabase.removeChannel(
+                roomChannel
+            );
+
+        }
+
+
+        roomChannel =
+            supabase
+                .channel(
+                    "robo-clash-room-" +
+                    code
+                )
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "UPDATE",
+                        schema: "public",
+                        table: "rooms",
+                        filter:
+                            "code=eq." + code
+                    },
+                    payload => {
+
+                        const room =
+                            payload.new;
+
+                        if (!room) {
+                            return;
+                        }
+
+                        displayPlayers(
+                            room.players || []
+                        );
+
+
+                        if (
+                            room.started === true
+                        ) {
+
+                            window.location.href =
+                                "game.html";
+
+                        }
+
+                    }
+                )
+                .subscribe();
+
+    }
+
+
+    // =========================
+    // CREATE ROOM
+    // =========================
+
     createRoom.addEventListener(
         "click",
-        () => {
+        async () => {
+
+            createRoom.disabled =
+                true;
+
+            showMessage(
+                "CREATING ROOM..."
+            );
+
 
             const code =
                 generateRoomCode();
 
-            showRoom(code);
 
-            message.textContent =
-                "ROOM CREATED! SEND THE CODE TO YOUR FRIEND.";
+            const players = [
+                {
+                    id: playerId,
+                    name: "PLAYER 1",
+                    host: true
+                }
+            ];
+
+
+            const { error } =
+                await supabase
+                    .from("rooms")
+                    .insert({
+                        code: code,
+                        host_id: playerId,
+                        players: players,
+                        started: false
+                    });
+
+
+            if (error) {
+
+                console.error(error);
+
+                showMessage(
+                    "COULD NOT CREATE ROOM."
+                );
+
+                createRoom.disabled =
+                    false;
+
+                return;
+
+            }
+
+
+            currentRoom = code;
+            isHost = true;
+
+
+            roomCode.textContent =
+                code;
+
+            displayPlayers(
+                players
+            );
+
+            showRoom();
+
+
+            showMessage(
+                "ROOM CREATED! SEND THE CODE TO YOUR FRIEND."
+            );
+
+
+            subscribeToRoom(
+                code
+            );
 
         }
     );
 
 
+    // =========================
+    // JOIN ROOM
+    // =========================
+
     joinRoom.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const enteredCode =
-                prompt("ENTER ROOM CODE:");
+                prompt(
+                    "ENTER ROOM CODE:"
+                );
+
 
             if (!enteredCode) {
                 return;
             }
+
 
             const code =
                 enteredCode
                     .trim()
                     .toUpperCase();
 
+
             if (code.length !== 6) {
 
-                message.textContent =
-                    "ROOM CODE MUST BE 6 CHARACTERS.";
+                showMessage(
+                    "ROOM CODE MUST BE 6 CHARACTERS."
+                );
 
                 return;
+
             }
 
-            showRoom(code);
 
-            message.textContent =
-                "JOINED ROOM " + code + "!";
+            showMessage(
+                "SEARCHING FOR ROOM..."
+            );
+
+
+            const { data, error } =
+                await supabase
+                    .from("rooms")
+                    .select("*")
+                    .eq(
+                        "code",
+                        code
+                    )
+                    .maybeSingle();
+
+
+            if (error) {
+
+                console.error(error);
+
+                showMessage(
+                    "COULD NOT CONNECT TO ROOMS."
+                );
+
+                return;
+
+            }
+
+
+            if (!data) {
+
+                showMessage(
+                    "ROOM NOT FOUND."
+                );
+
+                return;
+
+            }
+
+
+            if (data.started) {
+
+                showMessage(
+                    "THAT BATTLE HAS ALREADY STARTED."
+                );
+
+                return;
+
+            }
+
+
+            const players =
+                Array.isArray(
+                    data.players
+                )
+                    ? data.players
+                    : [];
+
+
+            const alreadyJoined =
+                players.some(
+                    player =>
+                        player.id === playerId
+                );
+
+
+            if (!alreadyJoined) {
+
+                players.push({
+
+                    id: playerId,
+
+                    name:
+                        "PLAYER " +
+                        (players.length + 1),
+
+                    host: false
+
+                });
+
+            }
+
+
+            const { error: updateError } =
+                await supabase
+                    .from("rooms")
+                    .update({
+                        players: players
+                    })
+                    .eq(
+                        "code",
+                        code
+                    );
+
+
+            if (updateError) {
+
+                console.error(
+                    updateError
+                );
+
+                showMessage(
+                    "COULD NOT JOIN ROOM."
+                );
+
+                return;
+
+            }
+
+
+            currentRoom = code;
+            isHost = false;
+
+
+            roomCode.textContent =
+                code;
+
+            displayPlayers(
+                players
+            );
+
+            showRoom();
+
+
+            showMessage(
+                "JOINED ROOM!"
+            );
+
+
+            subscribeToRoom(
+                code
+            );
 
         }
     );
 
 
+    // =========================
+    // START BATTLE
+    // =========================
+
     startGame.addEventListener(
         "click",
-        () => {
+        async () => {
+
+            if (!currentRoom) {
+                return;
+            }
+
+
+            if (!isHost) {
+
+                showMessage(
+                    "ONLY THE HOST CAN START."
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "STARTING BATTLE..."
+            );
+
+
+            const { error } =
+                await supabase
+                    .from("rooms")
+                    .update({
+                        started: true
+                    })
+                    .eq(
+                        "code",
+                        currentRoom
+                    );
+
+
+            if (error) {
+
+                console.error(error);
+
+                showMessage(
+                    "COULD NOT START BATTLE."
+                );
+
+                return;
+
+            }
+
 
             window.location.href =
                 "game.html";
