@@ -1,1 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>ROBO CLASH - ARMORY</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menu.css">
+
+    <style>
+        .armory-page {
+            width: min(700px, 92%);
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        .armory-title {
+            font-size: clamp(42px, 9vw, 72px);
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin: 0 0 30px;
+            text-shadow: 0 0 18px rgba(70, 180, 255, 0.8);
+        }
+
+        .armory-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: min(500px, 100%);
+            margin: 0 auto;
+        }
+
+        .armory-button {
+            min-height: 65px;
+            border-radius: 14px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(30, 70, 110, 0.45);
+            color: white;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .armory-button:hover {
+            transform: translateY(-2px);
+            background: rgba(40, 100, 155, 0.65);
+        }
+
+        .armory-button:active {
+            transform: scale(0.97);
+        }
+
+        .armory-button.primary {
+            background: rgba(40, 140, 255, 0.7);
+        }
+
+        .armory-panel {
+            display: none;
+            margin: 25px auto 0;
+            padding: 22px;
+            width: min(500px, 100%);
+            box-sizing: border-box;
+            background: rgba(10, 20, 38, 0.92);
+            border: 1px solid rgba(70, 180, 255, 0.35);
+            border-radius: 18px;
+        }
+
+        .armory-panel.active {
+            display: block;
+        }
+
+        .armory-panel h2 {
+            margin-top: 0;
+        }
+
+        .item-button {
+            width: 100%;
+            min-height: 55px;
+            margin-top: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(80, 190, 255, 0.4);
+            background: rgba(30, 70, 110, 0.4);
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .item-button:hover {
+            background: rgba(40, 100, 155, 0.65);
+        }
+
+        .status {
+            min-height: 20px;
+            margin-top: 15px;
+            opacity: 0.75;
+        }
+
+        .back-button {
+            display: block;
+            width: min(500px, 100%);
+            box-sizing: border-box;
+            margin: 18px auto 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="armory-page">
+
+    <h1 class="armory-title">
+        ARMORY
+    </h1>
+
+    <div class="armory-buttons">
+
+        <button
+            class="armory-button primary"
+            id="weaponsButton"
+            type="button"
+        >
+            🔫 WEAPONS
+        </button>
+
+        <button
+            class="armory-button"
+            id="equipmentButton"
+            type="button"
+        >
+            🛡️ EQUIPMENT
+        </button>
+
+    </div>
+
+
+    <!-- WEAPONS -->
+
+    <section
+        class="armory-panel"
+        id="weaponsPanel"
+    >
+
+        <h2>WEAPONS</h2>
+
+        <button
+            class="item-button"
+            type="button"
+            data-item="Blaster"
+        >
+            🔫 BLASTER
+        </button>
+
+        <button
+            class="item-button"
+            type="button"
+            data-item="Laser"
+        >
+            ⚡ LASER
+        </button>
+
+        <button
+            class="item-button"
+            type="button"
+            data-item="Rocket"
+        >
+            🚀 ROCKET
+        </button>
+
+        <div
+            class="status"
+            id="weaponStatus"
+        >
+            Choose a weapon.
+        </div>
+
+    </section>
+
+
+    <!-- EQUIPMENT -->
+
+    <section
+        class="armory-panel"
+        id="equipmentPanel"
+    >
+
+        <h2>EQUIPMENT</h2>
+
+        <button
+            class="item-button"
+            type="button"
+            data-equipment="Shield"
+        >
+            🛡️ SHIELD
+        </button>
+
+        <button
+            class="item-button"
+            type="button"
+            data-equipment="Boost"
+        >
+            ⚡ BOOST
+        </button>
+
+        <button
+            class="item-button"
+            type="button"
+            data-equipment="Repair"
+        >
+            🔧 REPAIR
+        </button>
+
+        <div
+            class="status"
+            id="equipmentStatus"
+        >
+            Choose your equipment.
+        </div>
+
+    </section>
+
+
+    <a
+        class="menu-button back-button"
+        href="index.html"
+    >
+        ← BACK TO MENU
+    </a>
+
+</main>
+
+
+<script>
+
+    const weaponsButton =
+        document.getElementById("weaponsButton");
+
+    const equipmentButton =
+        document.getElementById("equipmentButton");
+
+    const weaponsPanel =
+        document.getElementById("weaponsPanel");
+
+    const equipmentPanel =
+        document.getElementById("equipmentPanel");
+
+
+    function openPanel(panel) {
+
+        weaponsPanel.classList.remove("active");
+        equipmentPanel.classList.remove("active");
+
+        panel.classList.add("active");
+
+    }
+
+
+    weaponsButton.addEventListener(
+        "click",
+        () => {
+            openPanel(weaponsPanel);
+        }
+    );
+
+
+    equipmentButton.addEventListener(
+        "click",
+        () => {
+            openPanel(equipmentPanel);
+        }
+    );
+
+
+    // Save selected weapon
+
+    const weaponButtons =
+        document.querySelectorAll(
+            "[data-item]"
+        );
+
+    const weaponStatus =
+        document.getElementById(
+            "weaponStatus"
+        );
+
+
+    weaponButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const weapon =
+                        button.dataset.item;
+
+                    localStorage.setItem(
+                        "roboClashWeapon",
+                        weapon
+                    );
+
+                    weaponStatus.textContent =
+                        weapon.toUpperCase() +
+                        " SELECTED!";
+
+                }
+            );
+
+        }
+    );
+
+
+    // Save selected equipment
+
+    const equipmentButtons =
+        document.querySelectorAll(
+            "[data-equipment]"
+        );
+
+    const equipmentStatus =
+        document.getElementById(
+            "equipmentStatus"
+        );
+
+
+    equipmentButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const equipment =
+                        button.dataset.equipment;
+
+                    localStorage.setItem(
+                        "roboClashEquipment",
+                        equipment
+                    );
+
+                    equipmentStatus.textContent =
+                        equipment.toUpperCase() +
+                        " SELECTED!";
+
+                }
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
