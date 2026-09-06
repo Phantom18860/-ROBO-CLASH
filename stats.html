@@ -1,1 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>ROBO CLASH - STATS</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menu.css">
+
+    <style>
+        .stats-page {
+            width: min(700px, 92%);
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        .stats-title {
+            font-size: clamp(42px, 9vw, 72px);
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin: 0 0 30px;
+            text-shadow: 0 0 18px rgba(70, 180, 255, 0.8);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: min(600px, 100%);
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            padding: 24px 15px;
+            background: rgba(10, 20, 38, 0.92);
+            border: 1px solid rgba(70, 180, 255, 0.35);
+            border-radius: 18px;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+        }
+
+        .stat-name {
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            margin-top: 6px;
+            font-size: 42px;
+            font-weight: 900;
+            color: #65d8ff;
+            text-shadow: 0 0 14px rgba(70, 190, 255, 0.6);
+        }
+
+        .reset-button {
+            margin: 22px auto 0;
+            width: min(300px, 100%);
+        }
+
+        .back-button {
+            display: block;
+            width: min(500px, 100%);
+            box-sizing: border-box;
+            margin: 18px auto 0;
+        }
+
+        @media (max-width: 500px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="stats-page">
+
+    <h1 class="stats-title">
+        STATS
+    </h1>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">⚔️</div>
+            <div class="stat-name">BATTLES PLAYED</div>
+            <div class="stat-value" id="battles">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🟢</div>
+            <div class="stat-name">WINS</div>
+            <div class="stat-value" id="wins">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🔴</div>
+            <div class="stat-name">LOSSES</div>
+            <div class="stat-value" id="losses">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🥇</div>
+            <div class="stat-name">BEST SCORE</div>
+            <div class="stat-value" id="bestScore">0</div>
+        </div>
+
+    </div>
+
+    <button
+        class="menu-button reset-button"
+        id="resetStats"
+        type="button"
+    >
+        RESET STATS
+    </button>
+
+    <a
+        class="menu-button back-button"
+        href="index.html"
+    >
+        ← BACK TO MENU
+    </a>
+
+</main>
+
+<script>
+
+    const battles =
+        document.getElementById("battles");
+
+    const wins =
+        document.getElementById("wins");
+
+    const losses =
+        document.getElementById("losses");
+
+    const bestScore =
+        document.getElementById("bestScore");
+
+    const resetStats =
+        document.getElementById("resetStats");
+
+
+    function getStat(name) {
+
+        return Number(
+            localStorage.getItem(
+                "roboClash_" + name
+            ) || 0
+        );
+
+    }
+
+
+    function displayStats() {
+
+        battles.textContent =
+            getStat("battles");
+
+        wins.textContent =
+            getStat("wins");
+
+        losses.textContent =
+            getStat("losses");
+
+        bestScore.textContent =
+            getStat("bestScore");
+
+    }
+
+
+    displayStats();
+
+
+    resetStats.addEventListener(
+        "click",
+        () => {
+
+            localStorage.removeItem(
+                "roboClash_battles"
+            );
+
+            localStorage.removeItem(
+                "roboClash_wins"
+            );
+
+            localStorage.removeItem(
+                "roboClash_losses"
+            );
+
+            localStorage.removeItem(
+                "roboClash_bestScore"
+            );
+
+            displayStats();
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
