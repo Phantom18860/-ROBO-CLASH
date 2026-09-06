@@ -64,6 +64,7 @@
             margin: 25px auto 0;
             padding: 22px;
             width: min(500px, 100%);
+            box-sizing: border-box;
             background: rgba(10, 20, 38, 0.92);
             border: 1px solid rgba(70, 180, 255, 0.35);
             border-radius: 18px;
@@ -93,31 +94,63 @@
             margin-top: 12px;
         }
 
-        .theme-choice,
-        .animation-choice,
-        .robot-choice {
+        .choice-button {
             margin-top: 10px;
             width: 100%;
-            min-height: 48px;
+            min-height: 50px;
             border-radius: 10px;
             border: 1px solid rgba(80, 190, 255, 0.4);
             background: rgba(30, 70, 110, 0.4);
             color: white;
             cursor: pointer;
+            font-size: 16px;
             font-weight: 800;
         }
 
-        .status {
+        .choice-button:hover {
+            background: rgba(40, 100, 155, 0.65);
+        }
+
+        .reactions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
             margin-top: 15px;
+        }
+
+        .reaction-button {
+            width: 80px;
+            height: 70px;
+            border-radius: 14px;
+            border: 2px solid rgba(80, 190, 255, 0.35);
+            background: rgba(30, 70, 110, 0.4);
+            font-size: 34px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .reaction-button:hover {
+            transform: scale(1.08);
+        }
+
+        .reaction-button.selected {
+            border-color: #65d8ff;
+            background: rgba(40, 140, 255, 0.45);
+            box-shadow: 0 0 15px rgba(70, 190, 255, 0.5);
+        }
+
+        .status {
             min-height: 20px;
+            margin-top: 15px;
             opacity: 0.75;
         }
 
         .back-button {
             display: block;
             width: min(500px, 100%);
-            margin: 18px auto 0;
             box-sizing: border-box;
+            margin: 18px auto 0;
         }
     </style>
 </head>
@@ -129,6 +162,9 @@
     <h1 class="customize-title">
         CUSTOMIZE
     </h1>
+
+
+    <!-- FIVE OPTIONS -->
 
     <div class="customize-buttons">
 
@@ -164,10 +200,18 @@
             ✨ MENU ANIMATION
         </button>
 
+        <button
+            class="customize-button"
+            id="reactionsButton"
+            type="button"
+        >
+            💬 REACTIONS
+        </button>
+
     </div>
 
 
-    <!-- USERNAME -->
+    <!-- USERNAME PANEL -->
 
     <section
         class="customize-panel"
@@ -200,7 +244,7 @@
     </section>
 
 
-    <!-- HOME SCREEN LOOK -->
+    <!-- HOME SCREEN LOOK PANEL -->
 
     <section
         class="customize-panel"
@@ -210,7 +254,7 @@
         <h2>HOME SCREEN LOOK</h2>
 
         <button
-            class="theme-choice"
+            class="choice-button"
             type="button"
             data-theme="default"
         >
@@ -218,7 +262,7 @@
         </button>
 
         <button
-            class="theme-choice"
+            class="choice-button"
             type="button"
             data-theme="dark"
         >
@@ -226,7 +270,7 @@
         </button>
 
         <button
-            class="theme-choice"
+            class="choice-button"
             type="button"
             data-theme="neon"
         >
@@ -241,7 +285,7 @@
     </section>
 
 
-    <!-- ROBOTS -->
+    <!-- ROBOTS PANEL -->
 
     <section
         class="customize-panel"
@@ -251,21 +295,21 @@
         <h2>ROBOTS</h2>
 
         <button
-            class="robot-choice"
+            class="choice-button"
             type="button"
         >
             🤖 ROBOT 01
         </button>
 
         <button
-            class="robot-choice"
+            class="choice-button"
             type="button"
         >
             ⚡ ROBOT 02
         </button>
 
         <button
-            class="robot-choice"
+            class="choice-button"
             type="button"
         >
             🔥 ROBOT 03
@@ -275,13 +319,13 @@
             class="status"
             id="robotStatus"
         >
-            Robot selection coming next.
+            Robot customization coming next.
         </div>
 
     </section>
 
 
-    <!-- MENU ANIMATION -->
+    <!-- MENU ANIMATION PANEL -->
 
     <section
         class="customize-panel"
@@ -291,7 +335,7 @@
         <h2>MENU ANIMATION</h2>
 
         <button
-            class="animation-choice"
+            class="choice-button"
             type="button"
             data-animation="normal"
         >
@@ -299,7 +343,7 @@
         </button>
 
         <button
-            class="animation-choice"
+            class="choice-button"
             type="button"
             data-animation="fast"
         >
@@ -307,7 +351,7 @@
         </button>
 
         <button
-            class="animation-choice"
+            class="choice-button"
             type="button"
             data-animation="none"
         >
@@ -318,6 +362,60 @@
             class="status"
             id="animationStatus"
         ></div>
+
+    </section>
+
+
+    <!-- REACTIONS PANEL -->
+
+    <section
+        class="customize-panel"
+        id="reactionsPanel"
+    >
+
+        <h2>REACTIONS</h2>
+
+        <p>
+            Choose your battle reactions
+        </p>
+
+        <div class="reactions">
+
+            <button
+                class="reaction-button"
+                type="button"
+                data-reaction="😎"
+                aria-label="Cool reaction"
+            >
+                😎
+            </button>
+
+            <button
+                class="reaction-button"
+                type="button"
+                data-reaction="💩"
+                aria-label="Poop reaction"
+            >
+                💩
+            </button>
+
+            <button
+                class="reaction-button"
+                type="button"
+                data-reaction="🔥"
+                aria-label="Fire reaction"
+            >
+                🔥
+            </button>
+
+        </div>
+
+        <div
+            class="status"
+            id="reactionStatus"
+        >
+            Select your reactions.
+        </div>
 
     </section>
 
@@ -334,43 +432,49 @@
 
 <script>
 
-    const usernameButton =
-        document.getElementById("usernameButton");
+    // =========================
+    // PANELS
+    // =========================
 
-    const homeLookButton =
-        document.getElementById("homeLookButton");
+    const buttons = {
+        username:
+            document.getElementById("usernameButton"),
 
-    const robotsButton =
-        document.getElementById("robotsButton");
+        home:
+            document.getElementById("homeLookButton"),
 
-    const animationButton =
-        document.getElementById("animationButton");
+        robots:
+            document.getElementById("robotsButton"),
 
+        animation:
+            document.getElementById("animationButton"),
 
-    const usernamePanel =
-        document.getElementById("usernamePanel");
-
-    const homeLookPanel =
-        document.getElementById("homeLookPanel");
-
-    const robotsPanel =
-        document.getElementById("robotsPanel");
-
-    const animationPanel =
-        document.getElementById("animationPanel");
+        reactions:
+            document.getElementById("reactionsButton")
+    };
 
 
-    const panels = [
-        usernamePanel,
-        homeLookPanel,
-        robotsPanel,
-        animationPanel
-    ];
+    const panels = {
+        username:
+            document.getElementById("usernamePanel"),
+
+        home:
+            document.getElementById("homeLookPanel"),
+
+        robots:
+            document.getElementById("robotsPanel"),
+
+        animation:
+            document.getElementById("animationPanel"),
+
+        reactions:
+            document.getElementById("reactionsPanel")
+    };
 
 
     function openPanel(panel) {
 
-        panels.forEach(
+        Object.values(panels).forEach(
             item => item.classList.remove("active")
         );
 
@@ -379,27 +483,29 @@
     }
 
 
-    usernameButton.addEventListener(
+    buttons.username.addEventListener(
         "click",
-        () => openPanel(usernamePanel)
+        () => openPanel(panels.username)
     );
 
-
-    homeLookButton.addEventListener(
+    buttons.home.addEventListener(
         "click",
-        () => openPanel(homeLookPanel)
+        () => openPanel(panels.home)
     );
 
-
-    robotsButton.addEventListener(
+    buttons.robots.addEventListener(
         "click",
-        () => openPanel(robotsPanel)
+        () => openPanel(panels.robots)
     );
 
-
-    animationButton.addEventListener(
+    buttons.animation.addEventListener(
         "click",
-        () => openPanel(animationPanel)
+        () => openPanel(panels.animation)
+    );
+
+    buttons.reactions.addEventListener(
+        "click",
+        () => openPanel(panels.reactions)
     );
 
 
@@ -424,10 +530,8 @@
 
 
     if (savedUsername) {
-
         usernameInput.value =
             savedUsername;
-
     }
 
 
@@ -437,6 +541,7 @@
 
             const username =
                 usernameInput.value.trim();
+
 
             if (!username) {
 
@@ -467,7 +572,7 @@
 
     const themeButtons =
         document.querySelectorAll(
-            ".theme-choice"
+            "[data-theme]"
         );
 
     const themeStatus =
@@ -483,12 +588,9 @@
                 "click",
                 () => {
 
-                    const theme =
-                        button.dataset.theme;
-
                     localStorage.setItem(
                         "roboClashTheme",
-                        theme
+                        button.dataset.theme
                     );
 
                     themeStatus.textContent =
@@ -507,7 +609,7 @@
 
     const animationButtons =
         document.querySelectorAll(
-            ".animation-choice"
+            "[data-animation]"
         );
 
     const animationStatus =
@@ -523,18 +625,111 @@
                 "click",
                 () => {
 
-                    const animation =
-                        button.dataset.animation;
-
                     localStorage.setItem(
                         "roboClashAnimation",
-                        animation
+                        button.dataset.animation
                     );
 
                     animationStatus.textContent =
                         "MENU ANIMATION SAVED!";
 
                 }
+            );
+
+        }
+    );
+
+
+    // =========================
+    // REACTIONS
+    // =========================
+
+    const reactionButtons =
+        document.querySelectorAll(
+            ".reaction-button"
+        );
+
+    const reactionStatus =
+        document.getElementById(
+            "reactionStatus"
+        );
+
+
+    let selectedReactions =
+        JSON.parse(
+            localStorage.getItem(
+                "roboClashReactions"
+            ) || "[]"
+        );
+
+
+    reactionButtons.forEach(
+        button => {
+
+            const reaction =
+                button.dataset.reaction;
+
+
+            if (
+                selectedReactions.includes(
+                    reaction
+                )
+            ) {
+
+                button.classList.add(
+                    "selected"
+                );
+
+            }
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        selectedReactions.includes(
+                            reaction
+                        )
+                    ) {
+
+                        selectedReactions =
+                            selectedReactions.filter(
+                                item =>
+                                    item !== reaction
+                            );
+
+                        button.classList.remove(
+                            "selected"
+                        );
+
+                    } else {
+
+                        selectedReactions.push(
+                            reaction
+                        );
+
+                        button.classList.add(
+                            "selected"
+                        );
+
+                    }
+
+
+                    localStorage.setItem(
+                        "roboClashReactions",
+                        JSON.stringify(
+                            selectedReactions
+                        )
+                    );
+
+
+                    reactionStatus.textContent =
+                        selectedReactions.length +
+                        " REACTION(S) SELECTED.";
+
+                }
+
             );
 
         }
