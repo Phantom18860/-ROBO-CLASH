@@ -18,11 +18,11 @@
 
     <div class="menu-buttons">
 
-        <button class="menu-button primary" id="createRoom">
+        <button class="menu-button primary" id="createRoom" type="button">
             CREATE ROOM
         </button>
 
-        <button class="menu-button" id="joinRoom">
+        <button class="menu-button" id="joinRoom" type="button">
             JOIN ROOM
         </button>
 
@@ -34,7 +34,7 @@
 
     <div id="roomPanel" style="display:none;">
 
-        <h2>ROOM CREATED</h2>
+        <h2>ROBO CLASH PARTY</h2>
 
         <p>ROOM CODE</p>
 
@@ -46,112 +46,568 @@
             PLAYERS: 1
         </p>
 
-        <button class="menu-button primary" id="startGame">
+        <div id="playersList"></div>
+
+        <button class="menu-button primary" id="startGame" type="button">
             START BATTLE
         </button>
 
     </div>
 
+    <p id="message"></p>
+
 </main>
 
-<script>
+<script type="module">
 
-const createRoom =
-    document.getElementById("createRoom");
-
-const joinRoom =
-    document.getElementById("joinRoom");
-
-const roomPanel =
-    document.getElementById("roomPanel");
-
-const roomCode =
-    document.getElementById("roomCode");
-
-const roomPlayers =
-    document.getElementById("roomPlayers");
-
-const startGame =
-    document.getElementById("startGame");
+    import { createClient }
+        from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 
-function generateRoomCode() {
+    // ==============================
+    // ROBO CLASH SUPABASE SETTINGS
+    // ==============================
 
-    const characters =
-        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const SUPABASE_URL =
+        "https://kcvgqdwquzvpnvfxcinc.supabase.co";
 
-    let code = "";
+    // PUT YOUR SUPABASE PUBLISHABLE KEY BETWEEN THE QUOTES.
+    // NEVER PUT THE SECRET KEY HERE.
+    const SUPABASE_KEY =
+        "sb_publishable_-BMccvbWLKHoKbIYy9QMdQ_Of46eSCP";
 
-    for (let i = 0; i < 6; i++) {
 
-        code +=
-            characters[
-                Math.floor(
-                    Math.random() *
-                    characters.length
-                )
-            ];
+    const supabase =
+        createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    // ==============================
+    // PLAYER ID
+    // ==============================
+
+    let playerId =
+        sessionStorage.getItem("roboClashPlayerId");
+
+    if (!playerId) {
+
+        playerId =
+            crypto.randomUUID();
+
+        sessionStorage.setItem(
+            "roboClashPlayerId",
+            playerId
+        );
+    }
+
+
+    let currentRoom = null;
+    let isHost = false;
+    let roomChannel = null;
+
+
+    // ==============================
+    // ELEMENTS
+    // ==============================
+
+    const createRoom =
+        document.getElementById("createRoom");
+
+    const joinRoom =
+        document.getElementById("joinRoom");
+
+    const roomPanel =
+        document.getElementById("roomPanel");
+
+    const roomCode =
+        document.getElementById("roomCode");
+
+    const roomPlayers =
+        document.getElementById("roomPlayers");
+
+    const playersList =
+        document.getElementById("playersList");
+
+    const startGame =
+        document.getElementById("startGame");
+
+    const message =
+        document.getElementById("message");
+
+
+    // ==============================
+    // ROOM CODE
+    // ==============================
+
+    function generateRoomCode() {
+
+        const characters =
+            "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+        let code = "";
+
+        for (let i = 0; i < 6; i++) {
+
+            code +=
+                characters[
+                    Math.floor(
+                        Math.random() *
+                        characters.length
+                    )
+                ];
+
+        }
+
+        return code;
+    }
+
+
+    // ==============================
+    // SHOW MESSAGE
+    // ==============================
+
+    function showMessage(text) {
+
+        message.textContent = text;
 
     }
 
-    return code;
-}
+
+    // ==============================
+    // SHOW ROOM
+    // ==============================
+
+    function showRoom() {
+
+        roomPanel.style.display = "block";
+
+        createRoom.style.display = "none";
+
+        joinRoom.style.display = "none";
+
+    }
 
 
-createRoom.addEventListener("click", () => {
+    // ==============================
+    // DISPLAY PLAYERS
+    // ==============================
 
-    const code =
-        generateRoomCode();
+    function displayPlayers(players) {
 
-    roomCode.textContent =
-        code;
+        roomPlayers.textContent =
+            "PLAYERS: " + players.length;
 
-    roomPlayers.textContent =
-        "PLAYERS: 1";
+        playersList.innerHTML = "";
 
-    roomPanel.style.display =
-        "block";
+        players.forEach((player, index) => {
 
-    createRoom.style.display =
-        "none";
+            const playerBox =
+                document.createElement("div");
 
-    joinRoom.style.display =
-        "none";
+            playerBox.textContent =
+                "🤖 PLAYER " + (index + 1);
 
-});
+            playerBox.style.margin =
+                "8px 0";
 
+            playersList.appendChild(
+                playerBox
+            );
 
-startGame.addEventListener("click", () => {
+        });
 
-    window.location.href =
-        "game.html";
-
-});
+    }
 
 
-joinRoom.addEventListener("click", () => {
+    // ==============================
+    // SUBSCRIBE TO ROOM
+    // ==============================
 
-    const code =
-        prompt("ENTER ROOM CODE:");
+    function subscribeToRoom(code) {
 
-    if (!code) return;
+        if (roomChannel) {
 
-    roomCode.textContent =
-        code.toUpperCase();
+            supabase.removeChannel(
+                roomChannel
+            );
 
-    roomPlayers.textContent =
-        "PLAYERS: 1";
+        }
 
-    roomPanel.style.display =
-        "block";
+        roomChannel =
+            supabase
+                .channel("room-" + code)
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "*",
+                        schema: "public",
+                        table: "rooms",
+                        filter: "code=eq." + code
+                    },
+                    payload => {
 
-    createRoom.style.display =
-        "none";
+                        if (!payload.new) return;
 
-    joinRoom.style.display =
-        "none";
+                        const room =
+                            payload.new;
 
-});
+                        if (
+                            room.code !== currentRoom
+                        ) {
+                            return;
+                        }
+
+                        displayPlayers(
+                            room.players || []
+                        );
+
+
+                        // Host started battle
+                        if (
+                            room.started === true
+                        ) {
+
+                            window.location.href =
+                                "game.html";
+
+                        }
+
+                    }
+                )
+                .subscribe();
+
+    }
+
+
+    // ==============================
+    // CREATE ROOM
+    // ==============================
+
+    createRoom.addEventListener(
+        "click",
+        async () => {
+
+            createRoom.disabled = true;
+
+            showMessage(
+                "CREATING ROOM..."
+            );
+
+
+            let code = "";
+            let created = false;
+
+
+            for (let attempt = 0; attempt < 5; attempt++) {
+
+                code =
+                    generateRoomCode();
+
+
+                const players = [
+                    {
+                        id: playerId,
+                        name: "PLAYER 1",
+                        host: true
+                    }
+                ];
+
+
+                const { error } =
+                    await supabase
+                        .from("rooms")
+                        .insert({
+                            code: code,
+                            host_id: playerId,
+                            players: players,
+                            started: false
+                        });
+
+
+                if (!error) {
+
+                    created = true;
+
+                    break;
+
+                }
+
+            }
+
+
+            if (!created) {
+
+                showMessage(
+                    "Could not create room. Try again."
+                );
+
+                createRoom.disabled = false;
+
+                return;
+
+            }
+
+
+            currentRoom = code;
+
+            isHost = true;
+
+            roomCode.textContent =
+                code;
+
+            displayPlayers([
+                {
+                    id: playerId,
+                    name: "PLAYER 1",
+                    host: true
+                }
+            ]);
+
+            showRoom();
+
+            showMessage(
+                "ROOM CREATED! SEND THE CODE TO YOUR FRIEND."
+            );
+
+            subscribeToRoom(code);
+
+        }
+    );
+
+
+    // ==============================
+    // JOIN ROOM
+    // ==============================
+
+    joinRoom.addEventListener(
+        "click",
+        async () => {
+
+            const enteredCode =
+                prompt(
+                    "ENTER 6-CHARACTER ROOM CODE:"
+                );
+
+
+            if (!enteredCode) {
+                return;
+            }
+
+
+            const code =
+                enteredCode
+                    .trim()
+                    .toUpperCase();
+
+
+            if (code.length !== 6) {
+
+                showMessage(
+                    "ROOM CODE MUST BE 6 CHARACTERS."
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "SEARCHING FOR ROOM..."
+            );
+
+
+            const { data, error } =
+                await supabase
+                    .from("rooms")
+                    .select("*")
+                    .eq("code", code)
+                    .maybeSingle();
+
+
+            if (error) {
+
+                showMessage(
+                    "COULD NOT CONNECT TO ROOMS."
+                );
+
+                console.error(error);
+
+                return;
+
+            }
+
+
+            if (!data) {
+
+                showMessage(
+                    "ROOM NOT FOUND."
+                );
+
+                return;
+
+            }
+
+
+            if (data.started === true) {
+
+                showMessage(
+                    "THAT BATTLE HAS ALREADY STARTED."
+                );
+
+                return;
+
+            }
+
+
+            const players =
+                data.players || [];
+
+
+            const alreadyInside =
+                players.some(
+                    player =>
+                        player.id === playerId
+                );
+
+
+            if (!alreadyInside) {
+
+                players.push({
+
+                    id: playerId,
+
+                    name:
+                        "PLAYER " +
+                        (players.length + 1),
+
+                    host: false
+
+                });
+
+            }
+
+
+            const { error: updateError } =
+                await supabase
+                    .from("rooms")
+                    .update({
+                        players: players
+                    })
+                    .eq("code", code);
+
+
+            if (updateError) {
+
+                showMessage(
+                    "COULD NOT JOIN ROOM."
+                );
+
+                console.error(
+                    updateError
+                );
+
+                return;
+
+            }
+
+
+            currentRoom = code;
+
+            isHost = false;
+
+            roomCode.textContent =
+                code;
+
+            displayPlayers(players);
+
+            showRoom();
+
+            showMessage(
+                "JOINED ROOM!"
+            );
+
+            subscribeToRoom(code);
+
+        }
+    );
+
+
+    // ==============================
+    // START BATTLE
+    // ==============================
+
+    startGame.addEventListener(
+        "click",
+        async () => {
+
+            if (!currentRoom) {
+                return;
+            }
+
+
+            if (!isHost) {
+
+                showMessage(
+                    "ONLY THE HOST CAN START."
+                );
+
+                return;
+
+            }
+
+
+            const { error } =
+                await supabase
+                    .from("rooms")
+                    .update({
+                        started: true
+                    })
+                    .eq(
+                        "code",
+                        currentRoom
+                    );
+
+
+            if (error) {
+
+                showMessage(
+                    "COULD NOT START BATTLE."
+                );
+
+                console.error(error);
+
+                return;
+
+            }
+
+
+            window.location.href =
+                "game.html";
+
+        }
+    );
+
+
+    // ==============================
+    // CLEAN UP WHEN LEAVING
+    // ==============================
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (roomChannel) {
+
+                supabase.removeChannel(
+                    roomChannel
+                );
+
+            }
+
+        }
+    );
 
 </script>
 
