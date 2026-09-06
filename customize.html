@@ -1,1 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>ROBO CLASH - CUSTOMIZE</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menu.css">
+
+    <style>
+        .customize-page {
+            width: min(700px, 92%);
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        .customize-title {
+            font-size: clamp(42px, 9vw, 72px);
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin: 0 0 30px;
+            text-shadow: 0 0 18px rgba(70, 180, 255, 0.8);
+        }
+
+        .customize-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: min(500px, 100%);
+            margin: 0 auto;
+        }
+
+        .customize-button {
+            min-height: 65px;
+            border-radius: 14px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(30, 70, 110, 0.45);
+            color: white;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .customize-button:hover {
+            transform: translateY(-2px);
+            background: rgba(40, 100, 155, 0.65);
+        }
+
+        .customize-button:active {
+            transform: scale(0.97);
+        }
+
+        .customize-button.primary {
+            background: rgba(40, 140, 255, 0.7);
+        }
+
+        .customize-panel {
+            display: none;
+            margin: 25px auto 0;
+            padding: 22px;
+            width: min(500px, 100%);
+            background: rgba(10, 20, 38, 0.92);
+            border: 1px solid rgba(70, 180, 255, 0.35);
+            border-radius: 18px;
+        }
+
+        .customize-panel.active {
+            display: block;
+        }
+
+        .customize-panel h2 {
+            margin-top: 0;
+        }
+
+        .username-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(80, 190, 255, 0.5);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 18px;
+            outline: none;
+        }
+
+        .save-button {
+            margin-top: 12px;
+        }
+
+        .theme-choice,
+        .animation-choice,
+        .robot-choice {
+            margin-top: 10px;
+            width: 100%;
+            min-height: 48px;
+            border-radius: 10px;
+            border: 1px solid rgba(80, 190, 255, 0.4);
+            background: rgba(30, 70, 110, 0.4);
+            color: white;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .status {
+            margin-top: 15px;
+            min-height: 20px;
+            opacity: 0.75;
+        }
+
+        .back-button {
+            display: block;
+            width: min(500px, 100%);
+            margin: 18px auto 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="customize-page">
+
+    <h1 class="customize-title">
+        CUSTOMIZE
+    </h1>
+
+    <div class="customize-buttons">
+
+        <button
+            class="customize-button primary"
+            id="usernameButton"
+            type="button"
+        >
+            👤 USERNAME
+        </button>
+
+        <button
+            class="customize-button"
+            id="homeLookButton"
+            type="button"
+        >
+            🖥️ HOME SCREEN LOOK
+        </button>
+
+        <button
+            class="customize-button"
+            id="robotsButton"
+            type="button"
+        >
+            🤖 ROBOTS
+        </button>
+
+        <button
+            class="customize-button"
+            id="animationButton"
+            type="button"
+        >
+            ✨ MENU ANIMATION
+        </button>
+
+    </div>
+
+
+    <!-- USERNAME -->
+
+    <section
+        class="customize-panel"
+        id="usernamePanel"
+    >
+
+        <h2>USERNAME</h2>
+
+        <input
+            class="username-input"
+            id="usernameInput"
+            type="text"
+            maxlength="16"
+            placeholder="Enter username"
+        >
+
+        <button
+            class="customize-button save-button"
+            id="saveUsername"
+            type="button"
+        >
+            SAVE USERNAME
+        </button>
+
+        <div
+            class="status"
+            id="usernameStatus"
+        ></div>
+
+    </section>
+
+
+    <!-- HOME SCREEN LOOK -->
+
+    <section
+        class="customize-panel"
+        id="homeLookPanel"
+    >
+
+        <h2>HOME SCREEN LOOK</h2>
+
+        <button
+            class="theme-choice"
+            type="button"
+            data-theme="default"
+        >
+            DEFAULT
+        </button>
+
+        <button
+            class="theme-choice"
+            type="button"
+            data-theme="dark"
+        >
+            DARK
+        </button>
+
+        <button
+            class="theme-choice"
+            type="button"
+            data-theme="neon"
+        >
+            NEON
+        </button>
+
+        <div
+            class="status"
+            id="themeStatus"
+        ></div>
+
+    </section>
+
+
+    <!-- ROBOTS -->
+
+    <section
+        class="customize-panel"
+        id="robotsPanel"
+    >
+
+        <h2>ROBOTS</h2>
+
+        <button
+            class="robot-choice"
+            type="button"
+        >
+            🤖 ROBOT 01
+        </button>
+
+        <button
+            class="robot-choice"
+            type="button"
+        >
+            ⚡ ROBOT 02
+        </button>
+
+        <button
+            class="robot-choice"
+            type="button"
+        >
+            🔥 ROBOT 03
+        </button>
+
+        <div
+            class="status"
+            id="robotStatus"
+        >
+            Robot selection coming next.
+        </div>
+
+    </section>
+
+
+    <!-- MENU ANIMATION -->
+
+    <section
+        class="customize-panel"
+        id="animationPanel"
+    >
+
+        <h2>MENU ANIMATION</h2>
+
+        <button
+            class="animation-choice"
+            type="button"
+            data-animation="normal"
+        >
+            NORMAL
+        </button>
+
+        <button
+            class="animation-choice"
+            type="button"
+            data-animation="fast"
+        >
+            FAST
+        </button>
+
+        <button
+            class="animation-choice"
+            type="button"
+            data-animation="none"
+        >
+            NONE
+        </button>
+
+        <div
+            class="status"
+            id="animationStatus"
+        ></div>
+
+    </section>
+
+
+    <a
+        class="menu-button back-button"
+        href="index.html"
+    >
+        ← BACK TO MENU
+    </a>
+
+</main>
+
+
+<script>
+
+    const usernameButton =
+        document.getElementById("usernameButton");
+
+    const homeLookButton =
+        document.getElementById("homeLookButton");
+
+    const robotsButton =
+        document.getElementById("robotsButton");
+
+    const animationButton =
+        document.getElementById("animationButton");
+
+
+    const usernamePanel =
+        document.getElementById("usernamePanel");
+
+    const homeLookPanel =
+        document.getElementById("homeLookPanel");
+
+    const robotsPanel =
+        document.getElementById("robotsPanel");
+
+    const animationPanel =
+        document.getElementById("animationPanel");
+
+
+    const panels = [
+        usernamePanel,
+        homeLookPanel,
+        robotsPanel,
+        animationPanel
+    ];
+
+
+    function openPanel(panel) {
+
+        panels.forEach(
+            item => item.classList.remove("active")
+        );
+
+        panel.classList.add("active");
+
+    }
+
+
+    usernameButton.addEventListener(
+        "click",
+        () => openPanel(usernamePanel)
+    );
+
+
+    homeLookButton.addEventListener(
+        "click",
+        () => openPanel(homeLookPanel)
+    );
+
+
+    robotsButton.addEventListener(
+        "click",
+        () => openPanel(robotsPanel)
+    );
+
+
+    animationButton.addEventListener(
+        "click",
+        () => openPanel(animationPanel)
+    );
+
+
+    // =========================
+    // USERNAME
+    // =========================
+
+    const usernameInput =
+        document.getElementById("usernameInput");
+
+    const saveUsername =
+        document.getElementById("saveUsername");
+
+    const usernameStatus =
+        document.getElementById("usernameStatus");
+
+
+    const savedUsername =
+        localStorage.getItem(
+            "roboClashUsername"
+        );
+
+
+    if (savedUsername) {
+
+        usernameInput.value =
+            savedUsername;
+
+    }
+
+
+    saveUsername.addEventListener(
+        "click",
+        () => {
+
+            const username =
+                usernameInput.value.trim();
+
+            if (!username) {
+
+                usernameStatus.textContent =
+                    "ENTER A USERNAME.";
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                "roboClashUsername",
+                username
+            );
+
+
+            usernameStatus.textContent =
+                "USERNAME SAVED!";
+
+        }
+    );
+
+
+    // =========================
+    // HOME SCREEN LOOK
+    // =========================
+
+    const themeButtons =
+        document.querySelectorAll(
+            ".theme-choice"
+        );
+
+    const themeStatus =
+        document.getElementById(
+            "themeStatus"
+        );
+
+
+    themeButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const theme =
+                        button.dataset.theme;
+
+                    localStorage.setItem(
+                        "roboClashTheme",
+                        theme
+                    );
+
+                    themeStatus.textContent =
+                        "HOME SCREEN LOOK SAVED!";
+
+                }
+            );
+
+        }
+    );
+
+
+    // =========================
+    // MENU ANIMATION
+    // =========================
+
+    const animationButtons =
+        document.querySelectorAll(
+            ".animation-choice"
+        );
+
+    const animationStatus =
+        document.getElementById(
+            "animationStatus"
+        );
+
+
+    animationButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const animation =
+                        button.dataset.animation;
+
+                    localStorage.setItem(
+                        "roboClashAnimation",
+                        animation
+                    );
+
+                    animationStatus.textContent =
+                        "MENU ANIMATION SAVED!";
+
+                }
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
