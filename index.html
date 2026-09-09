@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ROBO CLASH</title>
 
     <link rel="stylesheet" href="css/main.css">
@@ -12,40 +11,60 @@
     <style>
         .coin-button {
             position: absolute;
-            top: 20px;
+            top: 18px;
             right: 20px;
-            padding: 10px 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(80, 190, 255, 0.5);
-            background: rgba(10, 20, 38, 0.9);
-            color: white;
-            font-size: 20px;
-            font-weight: 900;
+            width: 55px;
+            height: 55px;
+            padding: 0;
+            border: none;
+            background: transparent;
             cursor: pointer;
+            z-index: 10;
         }
 
-        .coin-button:hover {
-            transform: scale(1.05);
+        .coin-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.15s;
+        }
+
+        .coin-button:hover img {
+            transform: scale(1.08);
+        }
+
+        .coin-button:active img {
+            transform: scale(0.94);
         }
 
         .coin-panel {
             display: none;
             position: absolute;
-            top: 70px;
+            top: 82px;
             right: 20px;
-            padding: 15px 22px;
+            padding: 14px 20px;
             border-radius: 14px;
-            background: rgba(10, 20, 38, 0.95);
+            background: rgba(10, 20, 38, 0.96);
             border: 1px solid rgba(80, 190, 255, 0.5);
+            color: white;
             text-align: center;
+            z-index: 9;
         }
 
         .coin-panel.show {
             display: block;
         }
 
+        .coin-label {
+            font-size: 13px;
+            letter-spacing: 2px;
+            opacity: 0.75;
+        }
+
         .coin-amount {
-            font-size: 32px;
+            margin-top: 5px;
+            font-size: 30px;
             font-weight: 900;
         }
     </style>
@@ -57,21 +76,30 @@
     SYSTEM ONLINE
 </div>
 
+<!-- RC COIN -->
 <button
     class="coin-button"
     id="coinButton"
     type="button"
+    aria-label="Show coins"
 >
-    🪙 <span id="coinCount">0</span>
+    <img
+        src="assets/robo-coin.png"
+        alt="ROBO CLASH coin"
+    >
 </button>
 
+<!-- COIN BALANCE -->
 <div
     class="coin-panel"
     id="coinPanel"
 >
-    <div>YOUR COINS</div>
+    <div class="coin-label">
+        YOUR COINS
+    </div>
+
     <div class="coin-amount">
-        🪙 <span id="coinPanelCount">0</span>
+        🪙 <span id="coinCount">0</span>
     </div>
 </div>
 
@@ -85,13 +113,33 @@
 
     <div class="menu-buttons">
 
-        <a class="menu-button primary" href="game.html">PLAY</a>
-        <a class="menu-button" href="rooms.html">ROOMS</a>
-        <a class="menu-button" href="robots.html">ROBOTS</a>
-        <a class="menu-button" href="armory.html">ARMORY</a>
-        <a class="menu-button" href="customize.html">CUSTOMIZE</a>
-        <a class="menu-button" href="stats.html">STATS</a>
-        <a class="menu-button" href="settings.html">SETTINGS</a>
+        <a class="menu-button primary" href="game.html">
+            PLAY
+        </a>
+
+        <a class="menu-button" href="rooms.html">
+            ROOMS
+        </a>
+
+        <a class="menu-button" href="robots.html">
+            ROBOTS
+        </a>
+
+        <a class="menu-button" href="armory.html">
+            ARMORY
+        </a>
+
+        <a class="menu-button" href="customize.html">
+            CUSTOMIZE
+        </a>
+
+        <a class="menu-button" href="stats.html">
+            STATS
+        </a>
+
+        <a class="menu-button" href="settings.html">
+            SETTINGS
+        </a>
 
     </div>
 
@@ -108,34 +156,21 @@
     const coinCount =
         document.getElementById("coinCount");
 
-    const coinPanelCount =
-        document.getElementById("coinPanelCount");
-
 
     let coins = Number(
         localStorage.getItem("roboClashCoins") || 0
     );
 
 
-    function updateCoins() {
-
-        coinCount.textContent = coins;
-        coinPanelCount.textContent = coins;
-
-    }
+    coinCount.textContent = coins;
 
 
     coinButton.addEventListener(
         "click",
         () => {
-
             coinPanel.classList.toggle("show");
-
         }
     );
-
-
-    updateCoins();
 
 </script>
 
