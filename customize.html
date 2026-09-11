@@ -4,153 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ROBO CLASH - CUSTOMIZE</title>
+    <title>ROBO CLASH — Customize</title>
 
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/menu.css">
 
     <style>
+        body {
+            margin: 0;
+            background: #10152b;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
         .customize-page {
             width: min(700px, 92%);
-            margin: 0 auto;
-            text-align: center;
-            padding-top: 30px;
+            margin: 40px auto;
         }
 
         .customize-title {
-            font-size: clamp(42px, 9vw, 72px);
+            text-align: center;
+            font-size: 38px;
             font-weight: 900;
-            letter-spacing: 5px;
-            margin: 0 0 30px;
-            text-shadow: 0 0 18px rgba(70, 180, 255, 0.8);
+            letter-spacing: 3px;
+            margin-bottom: 30px;
         }
 
-        .customize-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            width: min(500px, 100%);
-            margin: 0 auto;
-        }
-
-        .customize-button {
-            min-height: 65px;
+        .customize-option {
+            background: #1b2342;
+            border: 1px solid rgba(255,255,255,.12);
             border-radius: 14px;
-            border: 1px solid rgba(80, 190, 255, 0.5);
-            background: rgba(30, 70, 110, 0.45);
-            color: white;
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.2s;
+            padding: 20px;
+            margin-bottom: 15px;
         }
 
-        .customize-button:hover {
-            transform: translateY(-2px);
-            background: rgba(40, 100, 155, 0.65);
+        .option-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 12px;
         }
 
-        .customize-button:active {
-            transform: scale(0.97);
-        }
-
-        .customize-button.primary {
-            background: rgba(40, 140, 255, 0.7);
-        }
-
-        .customize-panel {
-            display: none;
-            margin: 25px auto 0;
-            padding: 22px;
-            width: min(500px, 100%);
-            box-sizing: border-box;
-            background: rgba(10, 20, 38, 0.92);
-            border: 1px solid rgba(70, 180, 255, 0.35);
-            border-radius: 18px;
-        }
-
-        .customize-panel.active {
-            display: block;
-        }
-
-        .customize-panel h2 {
-            margin-top: 0;
-        }
-
-        .username-input {
+        input,
+        select {
             width: 100%;
-            box-sizing: border-box;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(80, 190, 255, 0.5);
-            background: rgba(0, 0, 0, 0.3);
+            padding: 13px;
+            border: 0;
+            border-radius: 9px;
+            background: #10152b;
             color: white;
-            font-size: 18px;
-            outline: none;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
-        .save-button {
-            margin-top: 12px;
-        }
-
-        .choice-button {
+        button {
+            padding: 13px 22px;
             margin-top: 10px;
-            width: 100%;
-            min-height: 50px;
-            border-radius: 10px;
-            border: 1px solid rgba(80, 190, 255, 0.4);
-            background: rgba(30, 70, 110, 0.4);
+            border: 0;
+            border-radius: 9px;
+            background: #6c63ff;
             color: white;
-            cursor: pointer;
             font-size: 16px;
             font-weight: 800;
+            cursor: pointer;
         }
 
-        .choice-button:hover {
-            background: rgba(40, 100, 155, 0.65);
+        button:active {
+            transform: scale(.97);
         }
 
-        .reactions {
+        .reaction-buttons {
             display: flex;
-            justify-content: center;
-            gap: 12px;
             flex-wrap: wrap;
-            margin-top: 15px;
+            gap: 10px;
         }
 
         .reaction-button {
-            width: 80px;
-            height: 70px;
-            border-radius: 14px;
-            border: 2px solid rgba(80, 190, 255, 0.35);
-            background: rgba(30, 70, 110, 0.4);
-            font-size: 34px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .reaction-button:hover {
-            transform: scale(1.08);
+            width: 65px;
+            height: 55px;
+            margin: 0;
+            padding: 0;
+            font-size: 28px;
+            background: #10152b;
+            border: 2px solid transparent;
         }
 
         .reaction-button.selected {
-            border-color: #65d8ff;
-            background: rgba(40, 140, 255, 0.45);
-            box-shadow: 0 0 15px rgba(70, 190, 255, 0.5);
+            border-color: #ffd166;
         }
 
-        .status {
-            min-height: 20px;
-            margin-top: 15px;
-            opacity: 0.75;
+        #status {
+            text-align: center;
+            margin-top: 20px;
+            min-height: 24px;
+            color: #ffd166;
+            font-weight: bold;
         }
 
         .back-button {
             display: block;
-            width: min(500px, 100%);
-            box-sizing: border-box;
-            margin: 18px auto 0;
+            width: 100%;
+            margin-top: 25px;
+            text-align: center;
+            text-decoration: none;
+            padding: 14px 0;
+            border-radius: 9px;
+            background: #242d52;
+            color: white;
+            font-weight: 800;
         }
     </style>
 </head>
@@ -159,272 +118,119 @@
 
 <main class="customize-page">
 
-    <h1 class="customize-title">
+    <div class="customize-title">
         CUSTOMIZE
-    </h1>
-
-
-    <!-- FIVE OPTIONS -->
-
-    <div class="customize-buttons">
-
-        <button
-            class="customize-button primary"
-            id="usernameButton"
-            type="button"
-        >
-            👤 USERNAME
-        </button>
-
-        <button
-            class="customize-button"
-            id="homeLookButton"
-            type="button"
-        >
-            🖥️ HOME SCREEN LOOK
-        </button>
-
-        <button
-            class="customize-button"
-            id="robotsButton"
-            type="button"
-        >
-            🤖 ROBOTS
-        </button>
-
-        <button
-            class="customize-button"
-            id="animationButton"
-            type="button"
-        >
-            ✨ MENU ANIMATION
-        </button>
-
-        <button
-            class="customize-button"
-            id="reactionsButton"
-            type="button"
-        >
-            💬 REACTIONS
-        </button>
-
     </div>
 
-
-    <!-- USERNAME PANEL -->
-
-    <section
-        class="customize-panel"
-        id="usernamePanel"
-    >
-
-        <h2>USERNAME</h2>
+    <!-- 1. USERNAME -->
+    <section class="customize-option">
+        <div class="option-title">1. USERNAME</div>
 
         <input
-            class="username-input"
-            id="usernameInput"
+            id="username"
             type="text"
             maxlength="16"
-            placeholder="Enter username"
+            placeholder="Enter your username"
         >
 
-        <button
-            class="customize-button save-button"
-            id="saveUsername"
-            type="button"
-        >
+        <button id="save-username">
             SAVE USERNAME
         </button>
-
-        <div
-            class="status"
-            id="usernameStatus"
-        ></div>
-
     </section>
 
 
-    <!-- HOME SCREEN LOOK PANEL -->
+    <!-- 2. HOME SCREEN LOOK -->
+    <section class="customize-option">
+        <div class="option-title">2. HOME SCREEN LOOK</div>
 
-    <section
-        class="customize-panel"
-        id="homeLookPanel"
-    >
+        <select id="home-look">
+            <option value="classic">Classic</option>
+            <option value="neon">Neon</option>
+            <option value="dark">Dark</option>
+        </select>
 
-        <h2>HOME SCREEN LOOK</h2>
-
-        <button
-            class="choice-button"
-            type="button"
-            data-theme="default"
-        >
-            DEFAULT
+        <button id="save-look">
+            APPLY LOOK
         </button>
-
-        <button
-            class="choice-button"
-            type="button"
-            data-theme="dark"
-        >
-            DARK
-        </button>
-
-        <button
-            class="choice-button"
-            type="button"
-            data-theme="neon"
-        >
-            NEON
-        </button>
-
-        <div
-            class="status"
-            id="themeStatus"
-        ></div>
-
     </section>
 
 
-    <!-- ROBOTS PANEL -->
+    <!-- 3. ROBOTS -->
+    <section class="customize-option">
+        <div class="option-title">3. ROBOTS</div>
 
-    <section
-        class="customize-panel"
-        id="robotsPanel"
-    >
+        <select id="robot">
+            <option value="default">Default Robot</option>
+            <option value="blue">Blue Robot</option>
+            <option value="red">Red Robot</option>
+            <option value="gold">Gold Robot</option>
+        </select>
 
-        <h2>ROBOTS</h2>
-
-        <button
-            class="choice-button"
-            type="button"
-        >
-            🤖 ROBOT 01
+        <button id="save-robot">
+            SELECT ROBOT
         </button>
-
-        <button
-            class="choice-button"
-            type="button"
-        >
-            ⚡ ROBOT 02
-        </button>
-
-        <button
-            class="choice-button"
-            type="button"
-        >
-            🔥 ROBOT 03
-        </button>
-
-        <div
-            class="status"
-            id="robotStatus"
-        >
-            Robot customization coming next.
-        </div>
-
     </section>
 
 
-    <!-- MENU ANIMATION PANEL -->
+    <!-- 4. MENU ANIMATION -->
+    <section class="customize-option">
+        <div class="option-title">4. MENU ANIMATION</div>
 
-    <section
-        class="customize-panel"
-        id="animationPanel"
-    >
+        <select id="menu-animation">
+            <option value="none">None</option>
+            <option value="neon">Neon</option>
+            <option value="slide">Slide</option>
+            <option value="fade">Fade</option>
+        </select>
 
-        <h2>MENU ANIMATION</h2>
-
-        <button
-            class="choice-button"
-            type="button"
-            data-animation="normal"
-        >
-            NORMAL
+        <button id="save-animation">
+            APPLY ANIMATION
         </button>
-
-        <button
-            class="choice-button"
-            type="button"
-            data-animation="fast"
-        >
-            FAST
-        </button>
-
-        <button
-            class="choice-button"
-            type="button"
-            data-animation="none"
-        >
-            NONE
-        </button>
-
-        <div
-            class="status"
-            id="animationStatus"
-        ></div>
-
     </section>
 
 
-    <!-- REACTIONS PANEL -->
+    <!-- 5. REACTIONS -->
+    <section class="customize-option">
+        <div class="option-title">5. REACTIONS</div>
 
-    <section
-        class="customize-panel"
-        id="reactionsPanel"
-    >
+        <div class="reaction-buttons">
 
-        <h2>REACTIONS</h2>
-
-        <p>
-            Choose your battle reactions
-        </p>
-
-        <div class="reactions">
-
-            <button
-                class="reaction-button"
-                type="button"
-                data-reaction="😎"
-                aria-label="Cool reaction"
-            >
+            <button class="reaction-button" data-reaction="😎">
                 😎
             </button>
 
-            <button
-                class="reaction-button"
-                type="button"
-                data-reaction="💩"
-                aria-label="Poop reaction"
-            >
+            <button class="reaction-button" data-reaction="💩">
                 💩
             </button>
 
-            <button
-                class="reaction-button"
-                type="button"
-                data-reaction="🔥"
-                aria-label="Fire reaction"
-            >
+            <button class="reaction-button" data-reaction="🔥">
                 🔥
+            </button>
+
+            <button class="reaction-button" data-reaction="😂">
+                😂
+            </button>
+
+            <button class="reaction-button" data-reaction="💀">
+                💀
+            </button>
+
+            <button class="reaction-button" data-reaction="🤖">
+                🤖
             </button>
 
         </div>
 
-        <div
-            class="status"
-            id="reactionStatus"
-        >
-            Select your reactions.
-        </div>
-
+        <button id="save-reactions">
+            SAVE REACTIONS
+        </button>
     </section>
 
 
-    <a
-        class="menu-button back-button"
-        href="index.html"
-    >
-        ← BACK TO MENU
+    <div id="status"></div>
+
+    <a class="back-button" href="index.html">
+        BACK TO MENU
     </a>
 
 </main>
@@ -432,308 +238,144 @@
 
 <script>
 
-    // =========================
-    // PANELS
-    // =========================
-
-    const buttons = {
-        username:
-            document.getElementById("usernameButton"),
-
-        home:
-            document.getElementById("homeLookButton"),
-
-        robots:
-            document.getElementById("robotsButton"),
-
-        animation:
-            document.getElementById("animationButton"),
-
-        reactions:
-            document.getElementById("reactionsButton")
-    };
+const usernameInput = document.getElementById("username");
+const homeLook = document.getElementById("home-look");
+const robotSelect = document.getElementById("robot");
+const menuAnimation = document.getElementById("menu-animation");
+const status = document.getElementById("status");
 
 
-    const panels = {
-        username:
-            document.getElementById("usernamePanel"),
+/* LOAD SAVED SETTINGS */
 
-        home:
-            document.getElementById("homeLookPanel"),
+usernameInput.value =
+    localStorage.getItem("roboClashUsername") || "";
 
-        robots:
-            document.getElementById("robotsPanel"),
+homeLook.value =
+    localStorage.getItem("roboClashHomeLook") || "classic";
 
-        animation:
-            document.getElementById("animationPanel"),
+robotSelect.value =
+    localStorage.getItem("roboClashRobot") || "default";
 
-        reactions:
-            document.getElementById("reactionsPanel")
-    };
+menuAnimation.value =
+    localStorage.getItem("roboClashMenuAnimation") || "none";
 
 
-    function openPanel(panel) {
+/* USERNAME */
 
-        Object.values(panels).forEach(
-            item => item.classList.remove("active")
-        );
+document.getElementById("save-username")
+    .addEventListener("click", () => {
 
-        panel.classList.add("active");
+        let name = usernameInput.value.trim();
 
-    }
-
-
-    buttons.username.addEventListener(
-        "click",
-        () => openPanel(panels.username)
-    );
-
-    buttons.home.addEventListener(
-        "click",
-        () => openPanel(panels.home)
-    );
-
-    buttons.robots.addEventListener(
-        "click",
-        () => openPanel(panels.robots)
-    );
-
-    buttons.animation.addEventListener(
-        "click",
-        () => openPanel(panels.animation)
-    );
-
-    buttons.reactions.addEventListener(
-        "click",
-        () => openPanel(panels.reactions)
-    );
-
-
-    // =========================
-    // USERNAME
-    // =========================
-
-    const usernameInput =
-        document.getElementById("usernameInput");
-
-    const saveUsername =
-        document.getElementById("saveUsername");
-
-    const usernameStatus =
-        document.getElementById("usernameStatus");
-
-
-    const savedUsername =
-        localStorage.getItem(
-            "roboClashUsername"
-        );
-
-
-    if (savedUsername) {
-        usernameInput.value =
-            savedUsername;
-    }
-
-
-    saveUsername.addEventListener(
-        "click",
-        () => {
-
-            const username =
-                usernameInput.value.trim();
-
-
-            if (!username) {
-
-                usernameStatus.textContent =
-                    "ENTER A USERNAME.";
-
-                return;
-
-            }
-
-
-            localStorage.setItem(
-                "roboClashUsername",
-                username
-            );
-
-
-            usernameStatus.textContent =
-                "USERNAME SAVED!";
-
+        if (name === "") {
+            name = "Player";
         }
-    );
 
-
-    // =========================
-    // HOME SCREEN LOOK
-    // =========================
-
-    const themeButtons =
-        document.querySelectorAll(
-            "[data-theme]"
+        localStorage.setItem(
+            "roboClashUsername",
+            name
         );
 
-    const themeStatus =
-        document.getElementById(
-            "themeStatus"
+        status.textContent =
+            "USERNAME SAVED: " + name;
+    });
+
+
+/* HOME LOOK */
+
+document.getElementById("save-look")
+    .addEventListener("click", () => {
+
+        localStorage.setItem(
+            "roboClashHomeLook",
+            homeLook.value
         );
 
-
-    themeButtons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    localStorage.setItem(
-                        "roboClashTheme",
-                        button.dataset.theme
-                    );
-
-                    themeStatus.textContent =
-                        "HOME SCREEN LOOK SAVED!";
-
-                }
-            );
-
-        }
-    );
+        status.textContent =
+            "HOME SCREEN LOOK SAVED";
+    });
 
 
-    // =========================
-    // MENU ANIMATION
-    // =========================
+/* ROBOT */
 
-    const animationButtons =
-        document.querySelectorAll(
-            "[data-animation]"
+document.getElementById("save-robot")
+    .addEventListener("click", () => {
+
+        localStorage.setItem(
+            "roboClashRobot",
+            robotSelect.value
         );
 
-    const animationStatus =
-        document.getElementById(
-            "animationStatus"
+        status.textContent =
+            "ROBOT SAVED";
+    });
+
+
+/* MENU ANIMATION */
+
+document.getElementById("save-animation")
+    .addEventListener("click", () => {
+
+        localStorage.setItem(
+            "roboClashMenuAnimation",
+            menuAnimation.value
         );
 
-
-    animationButtons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    localStorage.setItem(
-                        "roboClashAnimation",
-                        button.dataset.animation
-                    );
-
-                    animationStatus.textContent =
-                        "MENU ANIMATION SAVED!";
-
-                }
-            );
-
-        }
-    );
+        status.textContent =
+            "MENU ANIMATION SAVED: " +
+            menuAnimation.value.toUpperCase();
+    });
 
 
-    // =========================
-    // REACTIONS
-    // =========================
+/* REACTIONS */
 
-    const reactionButtons =
-        document.querySelectorAll(
-            ".reaction-button"
-        );
+const reactionButtons =
+    document.querySelectorAll(".reaction-button");
 
-    const reactionStatus =
-        document.getElementById(
-            "reactionStatus"
-        );
+reactionButtons.forEach(button => {
 
+    const reaction =
+        button.dataset.reaction;
 
-    let selectedReactions =
+    const saved =
         JSON.parse(
-            localStorage.getItem(
-                "roboClashReactions"
-            ) || "[]"
+            localStorage.getItem("roboClashReactions") || "[]"
         );
 
+    if (saved.includes(reaction)) {
+        button.classList.add("selected");
+    }
 
-    reactionButtons.forEach(
-        button => {
+    button.addEventListener("click", () => {
 
-            const reaction =
-                button.dataset.reaction;
+        button.classList.toggle("selected");
+
+    });
+
+});
 
 
-            if (
-                selectedReactions.includes(
-                    reaction
-                )
-            ) {
+document.getElementById("save-reactions")
+    .addEventListener("click", () => {
 
-                button.classList.add(
-                    "selected"
-                );
+        const selected = [];
 
+        reactionButtons.forEach(button => {
+
+            if (button.classList.contains("selected")) {
+                selected.push(button.dataset.reaction);
             }
 
+        });
 
-            button.addEventListener(
-                "click",
-                () => {
+        localStorage.setItem(
+            "roboClashReactions",
+            JSON.stringify(selected)
+        );
 
-                    if (
-                        selectedReactions.includes(
-                            reaction
-                        )
-                    ) {
-
-                        selectedReactions =
-                            selectedReactions.filter(
-                                item =>
-                                    item !== reaction
-                            );
-
-                        button.classList.remove(
-                            "selected"
-                        );
-
-                    } else {
-
-                        selectedReactions.push(
-                            reaction
-                        );
-
-                        button.classList.add(
-                            "selected"
-                        );
-
-                    }
-
-
-                    localStorage.setItem(
-                        "roboClashReactions",
-                        JSON.stringify(
-                            selectedReactions
-                        )
-                    );
-
-
-                    reactionStatus.textContent =
-                        selectedReactions.length +
-                        " REACTION(S) SELECTED.";
-
-                }
-
-            );
-
-        }
-    );
+        status.textContent =
+            "REACTIONS SAVED";
+    });
 
 </script>
 
