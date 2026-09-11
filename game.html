@@ -1,1073 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBO CLASH — Battle</title>
-
-    <link rel="stylesheet" href="css/main.css">
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #050713;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-
-        #game {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #battlefield {
-            position: absolute;
-            inset: 0;
-        }
-
-        #crosshair {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 30px;
-            font-weight: bold;
-            z-index: 5;
-            pointer-events: none;
-            text-shadow: 0 0 12px #fff;
-        }
-
-        #hud {
-            position: absolute;
-            top: 18px;
-            left: 18px;
-            right: 18px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 10;
-        }
-
-        .hud-item {
-            min-width: 180px;
-            padding: 10px 14px;
-            background: rgba(5, 8, 25, 0.82);
-            border: 1px solid rgba(255,255,255,.15);
-            border-radius: 10px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .hud-bar {
-            height: 10px;
-            margin-top: 7px;
-            background: #25283a;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .hud-fill {
-            height: 100%;
-            width: 100%;
-            transition: width .2s;
-        }
-
-        .health-fill {
-            background: #ff3d55;
-        }
-
-        .energy-fill {
-            background: #37bfff;
-        }
-
-        .weapon-name {
-            margin-left: auto;
-            min-width: auto;
-        }
-
-        #enemy-hud {
-            position: absolute;
-            top: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 260px;
-            z-index: 10;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-
-        #enemy-bar {
-            height: 12px;
-            margin-top: 7px;
-            background: #25283a;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,.2);
-        }
-
-        #enemy-health {
-            height: 100%;
-            width: 100%;
-            background: #ff405b;
-            transition: width .2s;
-        }
-
-        #controls {
-            position: absolute;
-            bottom: 22px;
-            left: 22px;
-            z-index: 20;
-            display: grid;
-            grid-template-columns: repeat(3, 52px);
-            gap: 7px;
-        }
-
-        .control {
-            width: 52px;
-            height: 52px;
-            border: 1px solid rgba(255,255,255,.2);
-            border-radius: 12px;
-            background: rgba(5,8,25,.8);
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-
-        .control:active {
-            transform: scale(.92);
-        }
-
-        #up {
-            grid-column: 2;
-        }
-
-        #attack {
-            position: absolute;
-            right: 28px;
-            bottom: 30px;
-            width: 92px;
-            height: 92px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,.35);
-            background: rgba(180, 20, 40, .75);
-            color: white;
-            font-size: 15px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            z-index: 20;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-
-        #attack:active {
-            transform: scale(.92);
-        }
-
-        #map-roll {
-            position: fixed;
-            inset: 0;
-            background: #080b19;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .roll-title {
-            font-size: 14px;
-            letter-spacing: 4px;
-            opacity: .65;
-            margin-bottom: 25px;
-        }
-
-        #map-card {
-            width: min(430px, 85vw);
-            padding: 35px 20px;
-            border: 1px solid rgba(255,255,255,.18);
-            border-radius: 18px;
-            background: linear-gradient(145deg, #151a35, #090c1d);
-            box-shadow: 0 0 45px rgba(70,100,255,.18);
-        }
-
-        #map-name {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 3px;
-        }
-
-        #map-description {
-            margin-top: 12px;
-            opacity: .65;
-        }
-
-        .roll-status {
-            margin-top: 25px;
-            font-size: 13px;
-            letter-spacing: 3px;
-        }
-
-        .result-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .result-panel {
-            width: min(620px, 88vw);
-            padding: 60px 25px;
-            border-radius: 24px;
-            border: 1px solid rgba(255,255,255,.25);
-            box-shadow: 0 20px 80px rgba(0,0,0,.55);
-        }
-
-        .result-title {
-            font-size: clamp(55px, 11vw, 105px);
-            font-weight: 1000;
-            letter-spacing: 5px;
-            text-shadow: 0 8px 25px rgba(0,0,0,.4);
-        }
-
-        .result-subtitle {
-            margin-top: 12px;
-            opacity: .85;
-            font-size: 18px;
-        }
-
-        .result-button {
-            margin-top: 35px;
-            padding: 15px 35px;
-            border: 0;
-            border-radius: 10px;
-            background: white;
-            color: #101225;
-            font-size: 16px;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        #win-screen {
-            background: rgba(10, 40, 150, .72);
-            backdrop-filter: blur(7px);
-        }
-
-        #win-screen .result-panel {
-            background: linear-gradient(145deg, #1255d8, #071d70);
-        }
-
-        #lose-screen {
-            background: rgba(120, 5, 18, .75);
-            backdrop-filter: blur(7px);
-        }
-
-        #lose-screen .result-panel {
-            background: linear-gradient(145deg, #d51f3a, #620714);
-        }
-
-        .fall-in {
-            animation: fallIn .65s cubic-bezier(.2,.9,.2,1) forwards;
-        }
-
-        @keyframes fallIn {
-            from {
-                transform: translateY(-120vh) rotate(-3deg);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0) rotate(0);
-                opacity: 1;
-            }
-        }
-
-        .fall-out {
-            animation: fallOut .55s ease-in forwards;
-        }
-
-        @keyframes fallOut {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(120vh);
-                opacity: 0;
-            }
-        }
-
-        #rewards-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 300;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            background: rgba(3,5,15,.96);
-        }
-
-        #rewards-card {
-            width: min(560px, 88vw);
-            padding: 35px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,.15);
-            border-radius: 22px;
-            background: linear-gradient(145deg, #151a32, #090c1a);
-            box-shadow: 0 20px 80px rgba(0,0,0,.55);
-        }
-
-        #rewards-title {
-            font-size: 34px;
-            font-weight: 1000;
-            letter-spacing: 3px;
-        }
-
-        #robot-display {
-            width: 170px;
-            height: 170px;
-            margin: 25px auto;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(40,150,255,.35), transparent 65%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 100px;
-        }
-
-        .reward-box {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .reward {
-            min-width: 130px;
-            padding: 18px;
-            border-radius: 12px;
-            background: rgba(255,255,255,.07);
-            border: 1px solid rgba(255,255,255,.12);
-        }
-
-        .reward-value {
-            font-size: 26px;
-            font-weight: 900;
-            margin-top: 6px;
-        }
-
-        @media (max-width: 650px) {
-            #hud {
-                flex-wrap: wrap;
-            }
-
-            .hud-item {
-                min-width: 130px;
-            }
-
-            .weapon-name {
-                margin-left: 0;
-            }
-
-            #enemy-hud {
-                top: 105px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROBO CLASH — Battle</title>
+<link rel="stylesheet" href="css/main.css">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050713;color:#fff;font-family:Arial,sans-serif}
+#game{position:relative;width:100%;height:100%;overflow:hidden}
+#battlefield{position:absolute;inset:0}
+#battlefield canvas{display:block}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;font-weight:900;z-index:10;pointer-events:none;text-shadow:0 0 12px #fff,0 0 25px #49cfff}
+#hud{position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:flex-start;gap:12px;z-index:20}
+.hud-item{min-width:175px;padding:10px 13px;background:rgba(5,8,25,.82);border:1px solid rgba(255,255,255,.14);border-radius:12px;font-weight:900;letter-spacing:1px;backdrop-filter:blur(8px)}
+.hud-bar{height:9px;margin-top:7px;background:#20253a;border-radius:8px;overflow:hidden}
+.hud-fill{height:100%;width:100%;transition:width .2s}
+.health-fill{background:#ff3d55}.energy-fill{background:#37bfff}
+.weapon-name{margin-left:auto;min-width:auto}
+#timer{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:20;padding:9px 16px;border-radius:10px;background:rgba(5,8,25,.82);border:1px solid rgba(255,255,255,.15);font-weight:1000;letter-spacing:2px}
+#enemy-hud{position:absolute;top:62px;left:50%;transform:translateX(-50%);width:280px;z-index:20;text-align:center;font-weight:900;letter-spacing:2px}
+#enemy-bar{height:10px;margin-top:7px;background:#25283a;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.18)}
+#enemy-health{height:100%;width:100%;background:#ff405b;transition:width .2s}
+.name-tag{position:absolute;z-index:8;padding:5px 10px;border-radius:8px;background:rgba(3,6,18,.78);border:1px solid rgba(255,255,255,.15);font-size:12px;font-weight:900;letter-spacing:1px;pointer-events:none;white-space:nowrap}
+#controls{position:absolute;bottom:20px;left:20px;z-index:20;display:grid;grid-template-columns:repeat(3,52px);gap:7px}
+.control{width:52px;height:52px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(5,8,25,.82);color:#fff;font-size:20px;font-weight:bold;cursor:pointer;touch-action:manipulation}
+.control:active{transform:scale(.92)}
+#up{grid-column:2}
+#attack{position:absolute;right:25px;bottom:28px;width:94px;height:94px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(180,20,40,.82);color:#fff;font-size:15px;font-weight:1000;letter-spacing:1px;z-index:20;cursor:pointer;touch-action:manipulation}
+#attack:active{transform:scale(.92)}
+#map-roll{position:fixed;inset:0;background:#080b19;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.roll-title{font-size:14px;letter-spacing:4px;opacity:.65;margin-bottom:25px}
+#map-card{width:min(470px,86vw);padding:40px 22px;border:1px solid rgba(255,255,255,.18);border-radius:20px;background:linear-gradient(145deg,#151a35,#090c1d);box-shadow:0 0 55px rgba(70,100,255,.2)}
+#map-name{font-size:34px;font-weight:1000;letter-spacing:3px}
+#map-description{margin-top:12px;opacity:.65}
+.roll-status{margin-top:25px;font-size:13px;letter-spacing:3px}
+.result-screen{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.result-panel{width:min(650px,90vw);padding:62px 25px;border-radius:26px;border:1px solid rgba(255,255,255,.25);box-shadow:0 25px 90px rgba(0,0,0,.6)}
+.result-title{font-size:clamp(55px,11vw,105px);font-weight:1000;letter-spacing:5px;text-shadow:0 8px 25px rgba(0,0,0,.4)}
+.result-subtitle{margin-top:12px;opacity:.88;font-size:18px}
+.result-button{margin-top:35px;padding:15px 35px;border:0;border-radius:12px;background:#fff;color:#101225;font-size:16px;font-weight:900;cursor:pointer}
+#win-screen{background:rgba(8,50,190,.76);backdrop-filter:blur(8px)}
+#win-screen .result-panel{background:linear-gradient(145deg,#1766ed,#071d70)}
+#lose-screen{background:rgba(125,5,20,.78);backdrop-filter:blur(8px)}
+#lose-screen .result-panel{background:linear-gradient(145deg,#e12643,#620714)}
+.fall-in{animation:fallIn .7s cubic-bezier(.2,.9,.2,1) forwards}
+.fall-out{animation:fallOut .55s ease-in forwards}
+@keyframes fallIn{from{transform:translateY(-120vh) rotate(-4deg);opacity:0}to{transform:translateY(0) rotate(0);opacity:1}}
+@keyframes fallOut{from{transform:translateY(0);opacity:1}to{transform:translateY(120vh);opacity:0}}
+#rewards-screen{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(3,5,15,.96)}
+#rewards-card{width:min(590px,90vw);padding:36px;text-align:center;border:1px solid rgba(255,255,255,.15);border-radius:24px;background:linear-gradient(145deg,#151a32,#090c1a);box-shadow:0 20px 80px rgba(0,0,0,.55)}
+#rewards-title{font-size:34px;font-weight:1000;letter-spacing:3px}
+#robot-display{width:180px;height:180px;margin:22px auto;border-radius:50%;background:radial-gradient(circle,rgba(40,150,255,.34),transparent 66%);display:flex;align-items:center;justify-content:center}
+#reward-robot{width:150px;height:150px}
+.reward-box{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.reward{min-width:145px;padding:17px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
+.reward-value{font-size:26px;font-weight:1000;margin-top:6px}
+#reward-message{margin-top:12px;opacity:.7}
+@media(max-width:650px){
+#hud{flex-wrap:wrap}.hud-item{min-width:130px}.weapon-name{margin-left:0}#enemy-hud{top:112px}.hud-item{font-size:12px}
+#timer{top:72px}.name-tag{font-size:10px}
+}
+</style>
 </head>
-
 <body>
 
 <div id="map-roll">
-    <div class="roll-title">SELECTING BATTLEFIELD</div>
-
-    <div id="map-card">
-        <div id="map-name">NEON CITY</div>
-        <div id="map-description">A futuristic city packed with cover.</div>
-    </div>
-
-    <div class="roll-status">ROLLING...</div>
+  <div class="roll-title">SELECTING BATTLEFIELD</div>
+  <div id="map-card">
+    <div id="map-name">NEON CITY</div>
+    <div id="map-description">A futuristic city packed with cover.</div>
+  </div>
+  <div class="roll-status">ROLLING...</div>
 </div>
 
 <div id="game">
+  <div id="battlefield"></div>
+  <div id="crosshair">+</div>
+  <div id="timer">00:00</div>
 
-    <div id="battlefield"></div>
+  <div id="enemy-hud">
+    ENEMY ROBOT
+    <div id="enemy-bar"><div id="enemy-health"></div></div>
+  </div>
 
-    <div id="crosshair">+</div>
+  <div id="hud">
+    <div class="hud-item">HP<div class="hud-bar"><div id="health-fill" class="hud-fill health-fill"></div></div></div>
+    <div class="hud-item">ENERGY<div class="hud-bar"><div id="energy-fill" class="hud-fill energy-fill"></div></div></div>
+    <div class="hud-item weapon-name" id="weapon">PULSE BLASTER</div>
+  </div>
 
-    <div id="enemy-hud">
-        ENEMY
-        <div id="enemy-bar">
-            <div id="enemy-health"></div>
-        </div>
-    </div>
-
-    <div id="hud">
-
-        <div class="hud-item">
-            HP
-            <div class="hud-bar">
-                <div id="health-fill" class="hud-fill health-fill"></div>
-            </div>
-        </div>
-
-        <div class="hud-item">
-            ENERGY
-            <div class="hud-bar">
-                <div id="energy-fill" class="hud-fill energy-fill"></div>
-            </div>
-        </div>
-
-        <div class="hud-item weapon-name" id="weapon">
-            PULSE BLASTER
-        </div>
-
-    </div>
-
-    <div id="controls">
-        <button class="control" id="up">▲</button>
-        <button class="control" id="left">◀</button>
-        <button class="control" id="down">▼</button>
-        <button class="control" id="right">▶</button>
-    </div>
-
-    <button id="attack">FIRE</button>
-
+  <div id="controls">
+    <button class="control" id="up" type="button">▲</button>
+    <button class="control" id="left" type="button">◀</button>
+    <button class="control" id="down" type="button">▼</button>
+    <button class="control" id="right" type="button">▶</button>
+  </div>
+  <button id="attack" type="button">FIRE</button>
 </div>
 
-<!-- WIN -->
 <div id="win-screen" class="result-screen">
-    <div class="result-panel">
-        <div class="result-title">YOU WIN</div>
-        <div class="result-subtitle">ENEMY ROBOT DESTROYED</div>
-        <button class="result-button" id="continue-button">CONTINUE</button>
-    </div>
+  <div class="result-panel">
+    <div class="result-title">YOU WIN</div>
+    <div class="result-subtitle">ENEMY ROBOT DESTROYED</div>
+    <button class="result-button" id="continue-button" type="button">CONTINUE</button>
+  </div>
 </div>
 
-<!-- LOSE -->
 <div id="lose-screen" class="result-screen">
-    <div class="result-panel">
-        <div class="result-title">YOU LOSE</div>
-        <div class="result-subtitle">YOUR ROBOT HAS BEEN DEFEATED</div>
-        <button class="result-button" id="retry-button">PLAY AGAIN</button>
-    </div>
+  <div class="result-panel">
+    <div class="result-title">YOU LOSE</div>
+    <div class="result-subtitle">YOUR ROBOT HAS BEEN DEFEATED</div>
+    <button class="result-button" id="retry-button" type="button">PLAY AGAIN</button>
+  </div>
 </div>
 
-<!-- REWARDS -->
 <div id="rewards-screen">
-    <div id="rewards-card">
-        <div id="rewards-title">BATTLE REWARDS</div>
-
-        <div id="robot-display">🤖</div>
-
-        <div class="reward-box">
-            <div class="reward">
-                COINS
-                <div class="reward-value">+100 🪙</div>
-            </div>
-
-            <div class="reward">
-                VICTORY
-                <div class="reward-value">+1 🏆</div>
-            </div>
-        </div>
-
-        <button class="result-button" id="back-menu">BACK TO MENU</button>
+  <div id="rewards-card">
+    <div id="rewards-title">BATTLE REWARDS</div>
+    <div id="robot-display"><canvas id="reward-robot"></canvas></div>
+    <div class="reward-box">
+      <div class="reward">RC COINS<div class="reward-value" id="coin-reward">+0 RC</div></div>
+      <div class="reward">VICTORY<div class="reward-value">+1 🏆</div></div>
     </div>
+    <div id="reward-message">Your RC has been added to your balance.</div>
+    <button class="result-button" id="back-menu" type="button">BACK TO MENU</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
 <script>
-/* =========================
-   MAP ROLLER
-========================= */
-
-const rollerMaps = [
-    ["NEON CITY", "A futuristic city packed with cover."],
-    ["ROBOT FACTORY", "An industrial battlefield filled with machinery."],
-    ["LAVA CORE", "A dangerous arena surrounding a molten reactor."],
-    ["FROST BASE", "A frozen military base built for combat."],
-    ["SCRAP DESERT", "A battlefield filled with abandoned machines."]
+/* MAP ROLLER */
+const rollerMaps=[
+ ["NEON CITY","A futuristic city packed with cover."],
+ ["ROBOT FACTORY","An industrial battlefield filled with machinery."],
+ ["LAVA CORE","A dangerous arena surrounding a molten reactor."],
+ ["FROST BASE","A frozen military base built for combat."],
+ ["SCRAP DESERT","A battlefield filled with abandoned machines."]
 ];
+const rollName=document.getElementById("map-name");
+const rollDescription=document.getElementById("map-description");
+const rollScreen=document.getElementById("map-roll");
+let rollNumber=0;
+const rollTimer=setInterval(()=>{
+ const map=rollerMaps[rollNumber%rollerMaps.length];
+ rollName.textContent=map[0]; rollDescription.textContent=map[1]; rollNumber++;
+},120);
+setTimeout(()=>{
+ clearInterval(rollTimer);
+ const chosen=rollerMaps[Math.floor(Math.random()*rollerMaps.length)];
+ rollName.textContent=chosen[0]; rollDescription.textContent=chosen[1];
+ document.querySelector(".roll-status").textContent="SELECTED MAP";
+ setTimeout(()=>rollScreen.style.display="none",850);
+},2500);
 
-const rollName = document.getElementById("map-name");
-const rollDescription = document.getElementById("map-description");
-const rollScreen = document.getElementById("map-roll");
-const rollStatus = document.querySelector(".roll-status");
-
-let rollNumber = 0;
-
-const rollTimer = setInterval(() => {
-    const map = rollerMaps[rollNumber % rollerMaps.length];
-
-    rollName.textContent = map[0];
-    rollDescription.textContent = map[1];
-
-    rollNumber++;
-}, 120);
-
-setTimeout(() => {
-    clearInterval(rollTimer);
-
-    const chosen =
-        rollerMaps[Math.floor(Math.random() * rollerMaps.length)];
-
-    rollName.textContent = chosen[0];
-    rollDescription.textContent = chosen[1];
-
-    rollStatus.textContent = "SELECTED MAP";
-
-    setTimeout(() => {
-        rollScreen.style.display = "none";
-    }, 1000);
-
-}, 2500);
-
-
-/* =========================
-   THREE.JS ARENA
-========================= */
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x070a18);
-
-const camera = new THREE.PerspectiveCamera(
-    65,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-);
-
-camera.position.set(0, 9, 12);
-camera.lookAt(0, 0, 0);
-
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
-
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
+/* THREE.JS ARENA */
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x070a18);
+scene.fog=new THREE.Fog(0x070a18,28,85);
+const camera=new THREE.PerspectiveCamera(68,innerWidth/innerHeight,.1,1000);
+camera.position.set(0,9,14);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 document.getElementById("battlefield").appendChild(renderer.domElement);
 
+scene.add(new THREE.HemisphereLight(0x9db7ff,0x141827,1.7));
+const sun=new THREE.DirectionalLight(0xffffff,2.2); sun.position.set(8,16,6); scene.add(sun);
+const blueLight=new THREE.PointLight(0x268cff,5,30); blueLight.position.set(-8,4,4); scene.add(blueLight);
+const redLight=new THREE.PointLight(0xff254d,5,30); redLight.position.set(8,4,-6); scene.add(redLight);
 
-/* LIGHTING */
+/* FLOOR */
+const floor=new THREE.Mesh(
+ new THREE.PlaneGeometry(42,42),
+ new THREE.MeshStandardMaterial({color:0x11172a,roughness:.75,metalness:.15})
+);
+floor.rotation.x=-Math.PI/2; scene.add(floor);
+const grid=new THREE.GridHelper(42,42,0x344467,0x20283d);
+grid.position.y=.03; scene.add(grid);
 
-const ambient = new THREE.AmbientLight(0xffffff, 1.5);
-scene.add(ambient);
+/* ARENA BORDERS */
+function wall(x,z,w,d){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,2.6,d),new THREE.MeshStandardMaterial({color:0x252d45,metalness:.55,roughness:.35}));
+ m.position.set(x,1.3,z); scene.add(m);
+}
+wall(0,-20,42,1); wall(0,20,42,1); wall(-20,0,1,42); wall(20,0,1,42);
 
-const light = new THREE.DirectionalLight(0xffffff, 2);
-light.position.set(5, 12, 7);
-scene.add(light);
+/* COVER / OBSTACLES */
+function block(x,z,w,h,d,material=0x2a3550){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:material,metalness:.5,roughness:.45}));
+ m.position.set(x,h/2,z); scene.add(m);
+ const strip=new THREE.Mesh(new THREE.BoxGeometry(w+.02,.08,.08),new THREE.MeshStandardMaterial({color:0x397cff,emissive:0x145dff,emissiveIntensity:1.2}));
+ strip.position.set(x,h+.02,z-d/2-.01); scene.add(strip);
+}
+block(-7,-5,5,2.4,2.2);
+block(7,-4,5,2.4,2.2);
+block(-8,5,4,2.2,2);
+block(8,6,4,2.2,2);
+block(0,-1,3.5,2,2);
+block(-13,11,3,2.2,3);
+block(13,-11,3,2.2,3);
 
+/* ROBOTS */
+function createRobot(bodyColor){
+ const robot=new THREE.Group();
+ const bodyMat=new THREE.MeshStandardMaterial({color:bodyColor,metalness:.78,roughness:.25});
+ const darkMat=new THREE.MeshStandardMaterial({color:0x111622,metalness:.9,roughness:.2});
+ const glowMat=new THREE.MeshStandardMaterial({color:0x5ad7ff,emissive:0x168cff,emissiveIntensity:3});
+ const body=new THREE.Mesh(new THREE.BoxGeometry(2.25,1.8,1.55),bodyMat); body.position.y=2; robot.add(body);
+ const chest=new THREE.Mesh(new THREE.BoxGeometry(1.25,.55,.12),glowMat); chest.position.set(0,2,-.8); robot.add(chest);
+ const head=new THREE.Mesh(new THREE.BoxGeometry(1.75,1.15,1.35),darkMat); head.position.y=3.45; robot.add(head);
+ const eye=new THREE.Mesh(new THREE.BoxGeometry(1.05,.2,.1),glowMat); eye.position.set(0,3.5,-.71); robot.add(eye);
+ const armG=new THREE.BoxGeometry(.6,1.55,.7);
+ const lArm=new THREE.Mesh(armG,bodyMat); lArm.position.set(-1.45,2,0); robot.add(lArm);
+ const rArm=new THREE.Mesh(armG,bodyMat); rArm.position.set(1.45,2,0); robot.add(rArm);
+ const legG=new THREE.BoxGeometry(.68,1.2,.75);
+ const lLeg=new THREE.Mesh(legG,darkMat); lLeg.position.set(-.58,.6,0); robot.add(lLeg);
+ const rLeg=new THREE.Mesh(legG,darkMat); rLeg.position.set(.58,.6,0); robot.add(rLeg);
+ return robot;
+}
+const player=createRobot(0x2878ff); player.position.set(0,0,10); player.rotation.y=Math.PI; scene.add(player);
+const enemy=createRobot(0xff304f); enemy.position.set(0,0,-10); scene.add(enemy);
 
-/* ARENA FLOOR */
+/* NAME TAGS */
+const playerTag=document.createElement("div"); playerTag.className="name-tag"; playerTag.textContent=localStorage.getItem("roboClashUsername")||localStorage.getItem("username")||"PHANTOM"; document.body.appendChild(playerTag);
+const enemyTag=document.createElement("div"); enemyTag.className="name-tag"; enemyTag.textContent="RIVAL"; document.body.appendChild(enemyTag);
 
-const floorGeometry = new THREE.PlaneGeometry(40, 40);
-const floorMaterial = new THREE.MeshStandardMaterial({
-    color: 0x151a2b,
-    roughness: .8
+function projectTag(tag,obj){
+ const p=obj.position.clone(); p.y+=4.5; p.project(camera);
+ tag.style.left=((p.x*.5+.5)*innerWidth)+"px";
+ tag.style.top=((-p.y*.5+.5)*innerHeight)+"px";
+ tag.style.transform="translate(-50%,-50%)";
+}
+
+/* GAME STATE */
+let playerHP=100, enemyHP=100, energy=100, gameOver=false;
+let matchStart=performance.now(), enemyAttackTimer=0, lastShot=0;
+
+function updateHUD(){
+ document.getElementById("health-fill").style.width=playerHP+"%";
+ document.getElementById("enemy-health").style.width=enemyHP+"%";
+ document.getElementById("energy-fill").style.width=energy+"%";
+}
+function elapsedSeconds(){return Math.floor((performance.now()-matchStart)/1000)}
+function rewardForTime(sec){
+ if(sec<60)return 500;
+ if(sec<180)return 350;
+ if(sec<600)return 200;
+ if(sec<1200)return 100;
+ if(sec<1800)return 30;
+ return 1;
+}
+
+/* MOVEMENT */
+const keys={};
+addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(e.code==="Space"){e.preventDefault();attack()}});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+function movePlayer(dir){
+ if(gameOver)return;
+ const speed=.38;
+ if(dir==="up")player.position.z-=speed;
+ if(dir==="down")player.position.z+=speed;
+ if(dir==="left")player.position.x-=speed;
+ if(dir==="right")player.position.x+=speed;
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-17,17);
+ player.position.z=THREE.MathUtils.clamp(player.position.z,-17,17);
+}
+function keyboardMovement(){
+ if(keys.w||keys.arrowup)movePlayer("up");
+ if(keys.s||keys.arrowdown)movePlayer("down");
+ if(keys.a||keys.arrowleft)movePlayer("left");
+ if(keys.d||keys.arrowright)movePlayer("right");
+}
+["up","down","left","right"].forEach(d=>document.getElementById(d).addEventListener("click",()=>movePlayer(d)));
+
+/* SHOOTING */
+function attack(){
+ if(gameOver||energy<20)return;
+ const now=performance.now(); if(now-lastShot<250)return;
+ lastShot=now; energy-=20;
+ const dist=player.position.distanceTo(enemy.position);
+ if(dist<14){
+   enemyHP=Math.max(0,enemyHP-20);
+   enemy.position.x+=((Math.random()-.5)*1.3);
+   enemy.position.z+=((Math.random()-.5)*.7);
+   if(enemyHP<=0)winGame();
+ }
+ updateHUD();
+}
+document.getElementById("attack").addEventListener("click",attack);
+
+/* ENEMY AI */
+function enemyAI(delta){
+ if(gameOver)return;
+ enemyAttackTimer+=delta;
+ const dist=enemy.position.distanceTo(player.position);
+ if(dist>5){
+   const dx=player.position.x-enemy.position.x, dz=player.position.z-enemy.position.z;
+   const len=Math.hypot(dx,dz)||1;
+   enemy.position.x+=dx/len*.075;
+   enemy.position.z+=dz/len*.075;
+   enemy.lookAt(player.position.x,enemy.position.y,player.position.z);
+ }
+ if(enemyAttackTimer>1.8&&dist<13){
+   playerHP=Math.max(0,playerHP-7);
+   enemyAttackTimer=0;
+   updateHUD();
+   if(playerHP<=0)loseGame();
+ }
+}
+
+/* RESULT SCREENS */
+function showScreen(id){
+ const screen=document.getElementById(id), panel=screen.querySelector(".result-panel");
+ screen.style.display="flex"; panel.classList.remove("fall-out"); void panel.offsetWidth; panel.classList.add("fall-in");
+}
+function winGame(){if(gameOver)return;gameOver=true;showScreen("win-screen")}
+function loseGame(){if(gameOver)return;gameOver=true;showScreen("lose-screen")}
+
+document.getElementById("continue-button").addEventListener("click",()=>{
+ const screen=document.getElementById("win-screen"),panel=screen.querySelector(".result-panel");
+ panel.classList.remove("fall-in");panel.classList.add("fall-out");
+ setTimeout(()=>{
+   screen.style.display="none";
+   const reward=rewardForTime(elapsedSeconds());
+   const coins=Number(localStorage.getItem("roboClashCoins")||0)+reward;
+   localStorage.setItem("roboClashCoins",coins);
+   document.getElementById("coin-reward").textContent="+"+reward+" RC";
+   document.getElementById("reward-message").textContent="Your balance is now "+coins+" RC.";
+   document.getElementById("rewards-screen").style.display="flex";
+ },550);
 });
+document.getElementById("retry-button").addEventListener("click",()=>location.reload());
+document.getElementById("back-menu").addEventListener("click",()=>location.href="index.html");
 
-const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-floor.rotation.x = -Math.PI / 2;
-scene.add(floor);
-
-
-/* ARENA GRID */
-
-const grid = new THREE.GridHelper(40, 40, 0x354060, 0x20263c);
-grid.position.y = 0.02;
-scene.add(grid);
-
-
-/* WALLS */
-
-function makeWall(x, z, sx, sz) {
-    const geometry = new THREE.BoxGeometry(sx, 2, sz);
-
-    const material = new THREE.MeshStandardMaterial({
-        color: 0x242b43,
-        roughness: .65
-    });
-
-    const wall = new THREE.Mesh(geometry, material);
-
-    wall.position.set(x, 1, z);
-
-    scene.add(wall);
+/* LOOP */
+const clock=new THREE.Clock();
+function animate(){
+ requestAnimationFrame(animate);
+ const delta=Math.min(clock.getDelta(),.05);
+ keyboardMovement(); enemyAI(delta);
+ camera.position.x+=(player.position.x*.45-camera.position.x)*.08;
+ camera.position.z+=((player.position.z+11)-camera.position.z)*.055;
+ camera.lookAt(player.position.x,1.8,player.position.z-3);
+ energy=Math.min(100,energy+delta*8);
+ const sec=elapsedSeconds();
+ document.getElementById("timer").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");
+ updateHUD(); projectTag(playerTag,player); projectTag(enemyTag,enemy);
+ renderer.render(scene,camera);
 }
-
-makeWall(0, -18, 40, 1);
-makeWall(0, 18, 40, 1);
-makeWall(-18, 0, 1, 40);
-makeWall(18, 0, 1, 40);
-
-
-/* =========================
-   ROBOTS
-========================= */
-
-function createRobot(bodyColor) {
-
-    const robot = new THREE.Group();
-
-    const bodyMaterial = new THREE.MeshStandardMaterial({
-        color: bodyColor,
-        metalness: .7,
-        roughness: .3
-    });
-
-    const darkMaterial = new THREE.MeshStandardMaterial({
-        color: 0x151820,
-        metalness: .8,
-        roughness: .25
-    });
-
-    const eyeMaterial = new THREE.MeshStandardMaterial({
-        color: 0x49cfff,
-        emissive: 0x168cff,
-        emissiveIntensity: 2
-    });
-
-    const body = new THREE.Mesh(
-        new THREE.BoxGeometry(2.1, 1.8, 1.5),
-        bodyMaterial
-    );
-
-    body.position.y = 1.8;
-    robot.add(body);
-
-    const head = new THREE.Mesh(
-        new THREE.BoxGeometry(1.7, 1.1, 1.3),
-        darkMaterial
-    );
-
-    head.position.y = 3.25;
-    robot.add(head);
-
-    const eye = new THREE.Mesh(
-        new THREE.BoxGeometry(.9, .18, .08),
-        eyeMaterial
-    );
-
-    eye.position.set(0, 3.3, -.67);
-    robot.add(eye);
-
-    const armGeometry = new THREE.BoxGeometry(.55, 1.5, .65);
-
-    const leftArm = new THREE.Mesh(
-        armGeometry,
-        bodyMaterial
-    );
-
-    leftArm.position.set(-1.35, 1.8, 0);
-    robot.add(leftArm);
-
-    const rightArm = new THREE.Mesh(
-        armGeometry,
-        bodyMaterial
-    );
-
-    rightArm.position.set(1.35, 1.8, 0);
-    robot.add(rightArm);
-
-    const legGeometry = new THREE.BoxGeometry(.65, 1.1, .7);
-
-    const leftLeg = new THREE.Mesh(
-        legGeometry,
-        darkMaterial
-    );
-
-    leftLeg.position.set(-.55, .55, 0);
-    robot.add(leftLeg);
-
-    const rightLeg = new THREE.Mesh(
-        legGeometry,
-        darkMaterial
-    );
-
-    rightLeg.position.set(.55, .55, 0);
-    robot.add(rightLeg);
-
-    return robot;
-}
-
-const player = createRobot(0x2878ff);
-player.position.set(0, 0, 8);
-player.rotation.y = Math.PI;
-
-scene.add(player);
-
-const enemy = createRobot(0xff304f);
-enemy.position.set(0, 0, -8);
-
-scene.add(enemy);
-
-
-/* =========================
-   GAME VARIABLES
-========================= */
-
-let playerHP = 100;
-let enemyHP = 100;
-let energy = 100;
-let gameOver = false;
-let enemyAttackTimer = 0;
-
-
-/* =========================
-   HUD
-========================= */
-
-function updateHUD() {
-
-    document.getElementById("health-fill").style.width =
-        playerHP + "%";
-
-    document.getElementById("enemy-health").style.width =
-        enemyHP + "%";
-
-    document.getElementById("energy-fill").style.width =
-        energy + "%";
-}
-
-
-/* =========================
-   MOVEMENT
-========================= */
-
-const keys = {};
-
-document.addEventListener("keydown", e => {
-    keys[e.key.toLowerCase()] = true;
-});
-
-document.addEventListener("keyup", e => {
-    keys[e.key.toLowerCase()] = false;
-});
-
-function movePlayer(direction) {
-
-    if (gameOver) return;
-
-    const speed = .7;
-
-    if (direction === "up") player.position.z -= speed;
-    if (direction === "down") player.position.z += speed;
-    if (direction === "left") player.position.x -= speed;
-    if (direction === "right") player.position.x += speed;
-
-    player.position.x = THREE.MathUtils.clamp(
-        player.position.x,
-        -15,
-        15
-    );
-
-    player.position.z = THREE.MathUtils.clamp(
-        player.position.z,
-        -14,
-        14
-    );
-}
-
-
-/* KEYBOARD CONTROLS */
-
-function keyboardMovement() {
-
-    if (keys["w"] || keys["arrowup"]) movePlayer("up");
-    if (keys["s"] || keys["arrowdown"]) movePlayer("down");
-    if (keys["a"] || keys["arrowleft"]) movePlayer("left");
-    if (keys["d"] || keys["arrowright"]) movePlayer("right");
-}
-
-
-/* MOBILE BUTTONS */
-
-document.getElementById("up").addEventListener("click", () => {
-    movePlayer("up");
-});
-
-document.getElementById("down").addEventListener("click", () => {
-    movePlayer("down");
-});
-
-document.getElementById("left").addEventListener("click", () => {
-    movePlayer("left");
-});
-
-document.getElementById("right").addEventListener("click", () => {
-    movePlayer("right");
-});
-
-
-/* =========================
-   ATTACK
-========================= */
-
-function attack() {
-
-    if (gameOver) return;
-    if (energy < 20) return;
-
-    energy -= 20;
-
-    const distance = player.position.distanceTo(enemy.position);
-
-    if (distance < 12) {
-        enemyHP -= 20;
-
-        enemyHP = Math.max(0, enemyHP);
-
-        enemy.position.x +=
-            (Math.random() - .5) * 1.2;
-
-        if (enemyHP <= 0) {
-            winGame();
-        }
-    }
-
-    updateHUD();
-}
-
-document.getElementById("attack").addEventListener("click", attack);
-
-document.addEventListener("keydown", e => {
-
-    if (e.code === "Space") {
-        e.preventDefault();
-        attack();
-    }
-
-});
-
-
-/* =========================
-   ENEMY AI
-========================= */
-
-function enemyAI(delta) {
-
-    if (gameOver) return;
-
-    enemyAttackTimer += delta;
-
-    const distance = enemy.position.distanceTo(player.position);
-
-    if (distance > 4) {
-
-        enemy.lookAt(
-            player.position.x,
-            enemy.position.y,
-            player.position.z
-        );
-
-        enemy.position.z +=
-            player.position.z > enemy.position.z ? .012 : -.012;
-
-        enemy.position.x +=
-            player.position.x > enemy.position.x ? .012 : -.012;
-    }
-
-    if (enemyAttackTimer > 2.2 && distance < 10) {
-
-        playerHP -= 8;
-
-        playerHP = Math.max(0, playerHP);
-
-        enemyAttackTimer = 0;
-
-        updateHUD();
-
-        if (playerHP <= 0) {
-            loseGame();
-        }
-    }
-}
-
-
-/* =========================
-   WIN
-========================= */
-
-function winGame() {
-
-    gameOver = true;
-
-    const screen = document.getElementById("win-screen");
-
-    screen.style.display = "flex";
-
-    const panel = screen.querySelector(".result-panel");
-
-    panel.classList.remove("fall-out");
-    panel.classList.add("fall-in");
-
-}
-
-
-/* =========================
-   LOSE
-========================= */
-
-function loseGame() {
-
-    gameOver = true;
-
-    const screen = document.getElementById("lose-screen");
-
-    screen.style.display = "flex";
-
-    const panel = screen.querySelector(".result-panel");
-
-    panel.classList.remove("fall-out");
-    panel.classList.add("fall-in");
-
-}
-
-
-/* =========================
-   WIN → REWARDS
-========================= */
-
-document.getElementById("continue-button")
-    .addEventListener("click", () => {
-
-        const screen = document.getElementById("win-screen");
-        const panel = screen.querySelector(".result-panel");
-
-        panel.classList.remove("fall-in");
-        panel.classList.add("fall-out");
-
-        setTimeout(() => {
-
-            screen.style.display = "none";
-
-            document.getElementById("rewards-screen")
-                .style.display = "flex";
-
-            addCoins(100);
-
-        }, 550);
-
-    });
-
-
-/* =========================
-   LOSE → RESTART
-========================= */
-
-document.getElementById("retry-button")
-    .addEventListener("click", () => {
-
-        location.reload();
-
-    });
-
-
-/* =========================
-   COINS
-========================= */
-
-function addCoins(amount) {
-
-    let coins =
-        Number(localStorage.getItem("roboClashCoins") || 0);
-
-    coins += amount;
-
-    localStorage.setItem(
-        "roboClashCoins",
-        coins
-    );
-}
-
-
-/* =========================
-   BACK TO MENU
-========================= */
-
-document.getElementById("back-menu")
-    .addEventListener("click", () => {
-
-        window.location.href = "index.html";
-
-    });
-
-
-/* =========================
-   CAMERA + GAME LOOP
-========================= */
-
-const clock = new THREE.Clock();
-
-function animate() {
-
-    requestAnimationFrame(animate);
-
-    const delta = clock.getDelta();
-
-    keyboardMovement();
-    enemyAI(delta);
-
-    camera.position.x +=
-        (player.position.x * .45 - camera.position.x) * .08;
-
-    camera.position.z +=
-        ((player.position.z + 10) - camera.position.z) * .05;
-
-    camera.lookAt(
-        player.position.x,
-        0,
-        player.position.z - 2
-    );
-
-    energy = Math.min(
-        100,
-        energy + delta * 5
-    );
-
-    updateHUD();
-
-    renderer.render(scene, camera);
-}
-
 animate();
 
-
-/* =========================
-   RESIZE
-========================= */
-
-window.addEventListener("resize", () => {
-
-    camera.aspect =
-        window.innerWidth / window.innerHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-        window.innerWidth,
-        window.innerHeight
-    );
-
+addEventListener("resize",()=>{
+ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight);
 });
 </script>
-
 </body>
 </html>
