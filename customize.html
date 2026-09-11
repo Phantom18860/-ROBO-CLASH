@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ROBO CLASH — Customize</title>
 
     <link rel="stylesheet" href="css/main.css">
@@ -40,7 +39,7 @@
         .option-title {
             font-size: 20px;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         input,
@@ -52,7 +51,6 @@
             background: #10152b;
             color: white;
             font-size: 16px;
-            box-sizing: border-box;
         }
 
         button {
@@ -70,6 +68,66 @@
         button:active {
             transform: scale(.97);
         }
+
+        /* ROBOTS */
+
+        .coin-display {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            background: #10152b;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .robot-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .robot-card {
+            position: relative;
+            padding: 18px 10px;
+            margin: 0;
+            min-height: 120px;
+            background: #10152b;
+            border: 2px solid rgba(255,255,255,.1);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .robot-card.selected {
+            border-color: #ffd166;
+        }
+
+        .robot-card.locked {
+            opacity: .45;
+        }
+
+        .robot-icon {
+            font-size: 42px;
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .robot-name {
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .robot-price {
+            margin-top: 5px;
+            font-size: 12px;
+            opacity: .75;
+        }
+
+        .locked-text {
+            color: #ff667a;
+        }
+
+        /* REACTIONS */
 
         .reaction-buttons {
             display: flex;
@@ -111,6 +169,12 @@
             color: white;
             font-weight: 800;
         }
+
+        @media (max-width: 500px) {
+            .robot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -123,8 +187,12 @@
     </div>
 
     <!-- 1. USERNAME -->
+
     <section class="customize-option">
-        <div class="option-title">1. USERNAME</div>
+
+        <div class="option-title">
+            1. USERNAME
+        </div>
 
         <input
             id="username"
@@ -136,12 +204,17 @@
         <button id="save-username">
             SAVE USERNAME
         </button>
+
     </section>
 
 
     <!-- 2. HOME SCREEN LOOK -->
+
     <section class="customize-option">
-        <div class="option-title">2. HOME SCREEN LOOK</div>
+
+        <div class="option-title">
+            2. HOME SCREEN LOOK
+        </div>
 
         <select id="home-look">
             <option value="classic">Classic</option>
@@ -152,29 +225,96 @@
         <button id="save-look">
             APPLY LOOK
         </button>
+
     </section>
 
 
     <!-- 3. ROBOTS -->
+
     <section class="customize-option">
-        <div class="option-title">3. ROBOTS</div>
 
-        <select id="robot">
-            <option value="default">Default Robot</option>
-            <option value="blue">Blue Robot</option>
-            <option value="red">Red Robot</option>
-            <option value="gold">Gold Robot</option>
-        </select>
+        <div class="option-title">
+            3. ROBOTS
+        </div>
 
-        <button id="save-robot">
-            SELECT ROBOT
-        </button>
+        <div class="coin-display">
+            🪙 ROBO COINS: <span id="coin-count">0</span>
+        </div>
+
+        <div class="robot-grid">
+
+            <button class="robot-card" data-robot="default" data-price="0">
+                <span class="robot-icon">🤖</span>
+                <span class="robot-name">DEFAULT</span>
+                <div class="robot-price">FREE</div>
+            </button>
+
+            <button class="robot-card" data-robot="blue" data-price="500">
+                <span class="robot-icon">🔵</span>
+                <span class="robot-name">BLUE</span>
+                <div class="robot-price">500 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="red" data-price="1000">
+                <span class="robot-icon">🔴</span>
+                <span class="robot-name">RED</span>
+                <div class="robot-price">1,000 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="green" data-price="1500">
+                <span class="robot-icon">🟢</span>
+                <span class="robot-name">GREEN</span>
+                <div class="robot-price">1,500 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="purple" data-price="2000">
+                <span class="robot-icon">🟣</span>
+                <span class="robot-name">PURPLE</span>
+                <div class="robot-price">2,000 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="neon" data-price="3000">
+                <span class="robot-icon">⚡</span>
+                <span class="robot-name">NEON</span>
+                <div class="robot-price">3,000 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="titan" data-price="4000">
+                <span class="robot-icon">🛡️</span>
+                <span class="robot-name">TITAN</span>
+                <div class="robot-price">4,000 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="cyber" data-price="5000">
+                <span class="robot-icon">👾</span>
+                <span class="robot-name">CYBER</span>
+                <div class="robot-price">5,000 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="crystal" data-price="7500">
+                <span class="robot-icon">💎</span>
+                <span class="robot-name">CRYSTAL</span>
+                <div class="robot-price">7,500 RC</div>
+            </button>
+
+            <button class="robot-card" data-robot="gold" data-price="10000">
+                <span class="robot-icon">🥇</span>
+                <span class="robot-name">GOLD</span>
+                <div class="robot-price">10,000 RC</div>
+            </button>
+
+        </div>
+
     </section>
 
 
     <!-- 4. MENU ANIMATION -->
+
     <section class="customize-option">
-        <div class="option-title">4. MENU ANIMATION</div>
+
+        <div class="option-title">
+            4. MENU ANIMATION
+        </div>
 
         <select id="menu-animation">
             <option value="none">None</option>
@@ -186,44 +326,33 @@
         <button id="save-animation">
             APPLY ANIMATION
         </button>
+
     </section>
 
 
     <!-- 5. REACTIONS -->
+
     <section class="customize-option">
-        <div class="option-title">5. REACTIONS</div>
+
+        <div class="option-title">
+            5. REACTIONS
+        </div>
 
         <div class="reaction-buttons">
 
-            <button class="reaction-button" data-reaction="😎">
-                😎
-            </button>
-
-            <button class="reaction-button" data-reaction="💩">
-                💩
-            </button>
-
-            <button class="reaction-button" data-reaction="🔥">
-                🔥
-            </button>
-
-            <button class="reaction-button" data-reaction="😂">
-                😂
-            </button>
-
-            <button class="reaction-button" data-reaction="💀">
-                💀
-            </button>
-
-            <button class="reaction-button" data-reaction="🤖">
-                🤖
-            </button>
+            <button class="reaction-button" data-reaction="😎">😎</button>
+            <button class="reaction-button" data-reaction="💩">💩</button>
+            <button class="reaction-button" data-reaction="🔥">🔥</button>
+            <button class="reaction-button" data-reaction="😂">😂</button>
+            <button class="reaction-button" data-reaction="💀">💀</button>
+            <button class="reaction-button" data-reaction="🤖">🤖</button>
 
         </div>
 
         <button id="save-reactions">
             SAVE REACTIONS
         </button>
+
     </section>
 
 
@@ -238,34 +367,21 @@
 
 <script>
 
-const usernameInput = document.getElementById("username");
-const homeLook = document.getElementById("home-look");
-const robotSelect = document.getElementById("robot");
-const menuAnimation = document.getElementById("menu-animation");
-const status = document.getElementById("status");
+/* =========================
+   USERNAME
+========================= */
 
-
-/* LOAD SAVED SETTINGS */
+const usernameInput =
+    document.getElementById("username");
 
 usernameInput.value =
     localStorage.getItem("roboClashUsername") || "";
 
-homeLook.value =
-    localStorage.getItem("roboClashHomeLook") || "classic";
-
-robotSelect.value =
-    localStorage.getItem("roboClashRobot") || "default";
-
-menuAnimation.value =
-    localStorage.getItem("roboClashMenuAnimation") || "none";
-
-
-/* USERNAME */
-
 document.getElementById("save-username")
     .addEventListener("click", () => {
 
-        let name = usernameInput.value.trim();
+        let name =
+            usernameInput.value.trim();
 
         if (name === "") {
             name = "Player";
@@ -276,12 +392,23 @@ document.getElementById("save-username")
             name
         );
 
-        status.textContent =
+        document.getElementById("status")
+            .textContent =
             "USERNAME SAVED: " + name;
     });
 
 
-/* HOME LOOK */
+/* =========================
+   HOME LOOK
+========================= */
+
+const homeLook =
+    document.getElementById("home-look");
+
+homeLook.value =
+    localStorage.getItem(
+        "roboClashHomeLook"
+    ) || "classic";
 
 document.getElementById("save-look")
     .addEventListener("click", () => {
@@ -291,27 +418,94 @@ document.getElementById("save-look")
             homeLook.value
         );
 
-        status.textContent =
+        document.getElementById("status")
+            .textContent =
             "HOME SCREEN LOOK SAVED";
     });
 
 
-/* ROBOT */
+/* =========================
+   ROBOTS
+========================= */
 
-document.getElementById("save-robot")
-    .addEventListener("click", () => {
+const coinCount =
+    document.getElementById("coin-count");
+
+const robotCards =
+    document.querySelectorAll(".robot-card");
+
+let coins =
+    Number(
+        localStorage.getItem(
+            "roboClashCoins"
+        ) || 0
+    );
+
+coinCount.textContent =
+    coins.toLocaleString();
+
+const selectedRobot =
+    localStorage.getItem(
+        "roboClashRobot"
+    ) || "default";
+
+robotCards.forEach(card => {
+
+    if (card.dataset.robot === selectedRobot) {
+        card.classList.add("selected");
+    }
+
+    const price =
+        Number(card.dataset.price);
+
+    if (coins < price) {
+        if (price > 0) {
+            card.classList.add("locked");
+        }
+    }
+
+    card.addEventListener("click", () => {
+
+        if (coins < price) {
+
+            document.getElementById("status")
+                .textContent =
+                "NOT ENOUGH ROBO COINS";
+
+            return;
+        }
+
+        robotCards.forEach(other => {
+            other.classList.remove("selected");
+        });
+
+        card.classList.add("selected");
 
         localStorage.setItem(
             "roboClashRobot",
-            robotSelect.value
+            card.dataset.robot
         );
 
-        status.textContent =
-            "ROBOT SAVED";
+        document.getElementById("status")
+            .textContent =
+            card.querySelector(".robot-name").textContent +
+            " ROBOT SELECTED";
     });
 
+});
 
-/* MENU ANIMATION */
+
+/* =========================
+   MENU ANIMATION
+========================= */
+
+const menuAnimation =
+    document.getElementById("menu-animation");
+
+menuAnimation.value =
+    localStorage.getItem(
+        "roboClashMenuAnimation"
+    ) || "none";
 
 document.getElementById("save-animation")
     .addEventListener("click", () => {
@@ -321,28 +515,36 @@ document.getElementById("save-animation")
             menuAnimation.value
         );
 
-        status.textContent =
+        document.getElementById("status")
+            .textContent =
             "MENU ANIMATION SAVED: " +
             menuAnimation.value.toUpperCase();
     });
 
 
-/* REACTIONS */
+/* =========================
+   REACTIONS
+========================= */
 
 const reactionButtons =
-    document.querySelectorAll(".reaction-button");
+    document.querySelectorAll(
+        ".reaction-button"
+    );
+
+let savedReactions =
+    JSON.parse(
+        localStorage.getItem(
+            "roboClashReactions"
+        ) || "[]"
+    );
 
 reactionButtons.forEach(button => {
 
-    const reaction =
-        button.dataset.reaction;
-
-    const saved =
-        JSON.parse(
-            localStorage.getItem("roboClashReactions") || "[]"
-        );
-
-    if (saved.includes(reaction)) {
+    if (
+        savedReactions.includes(
+            button.dataset.reaction
+        )
+    ) {
         button.classList.add("selected");
     }
 
@@ -362,8 +564,14 @@ document.getElementById("save-reactions")
 
         reactionButtons.forEach(button => {
 
-            if (button.classList.contains("selected")) {
-                selected.push(button.dataset.reaction);
+            if (
+                button.classList.contains(
+                    "selected"
+                )
+            ) {
+                selected.push(
+                    button.dataset.reaction
+                );
             }
 
         });
@@ -373,7 +581,8 @@ document.getElementById("save-reactions")
             JSON.stringify(selected)
         );
 
-        status.textContent =
+        document.getElementById("status")
+            .textContent =
             "REACTIONS SAVED";
     });
 
