@@ -6,7 +6,14 @@ const arena = {
     playerHealth: 100,
     enemyHealth: 100,
     energy: 100,
-    coinsEarned: 0
+    coinsEarned: 0,
+
+    // Current arena
+    type: "space",
+
+    // SPACE ARENA — ZERO GRAVITY
+    gravity: 0,
+    floating: true
 };
 
 function startArena() {
@@ -16,7 +23,8 @@ function startArena() {
     arena.enemyHealth = 100;
     arena.energy = 100;
 
-    console.log("ROBO CLASH ARENA STARTED");
+    console.log("ROBO CLASH SPACE ARENA STARTED");
+    console.log("ZERO GRAVITY — ROBOTS ARE FLOATING");
 }
 
 function getMatchTime() {
