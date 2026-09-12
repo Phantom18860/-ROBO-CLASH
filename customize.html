@@ -436,63 +436,137 @@ const robotCards =
 
 let coins =
     Number(
-        localStorage.getItem(
-            "roboClashCoins"
-        ) || 0
+        localStorage.getItem("roboClashCoins") || 0
     );
 
-coinCount.textContent =
-    coins.toLocaleString();
+let unlockedRobots =
+    JSON.parse(
+        localStorage.getItem("roboClashUnlocked") ||
+        '["default"]'
+    );
 
-const selectedRobot =
-    localStorage.getItem(
-        "roboClashRobot"
-    ) || "default";
+if (!Array.isArray(unlockedRobots)) {
+    unlockedRobots = ["default"];
+}
+
+if (!unlockedRobots.includes("default")) {
+    unlockedRobots.push("default");
+}
+
+function saveUnlocked() {
+    localStorage.setItem(
+        "roboClashUnlocked",
+        JSON.stringify(unlockedRobots)
+    );
+}
+
+function updateRobots() {
+
+    coins = Number(
+        localStorage.getItem("roboClashCoins") || 0
+    );
+
+    coinCount.textContent =
+        coins.toLocaleString();
+
+    const equipped =
+        localStorage.getItem("roboClashRobot") ||
+        "default";
+
+    robotCards.forEach(card => {
+
+        const robot = card.dataset.robot;
+        const price = Number(card.dataset.price);
+        const unlocked =
+            unlockedRobots.includes(robot);
+
+        card.classList.toggle(
+            "locked",
+            !unlocked
+        );
+
+        card.classList.toggle(
+            "selected",
+            robot === equipped
+        );
+
+        const priceText =
+            card.querySelector(".robot-price");
+
+        if (unlocked) {
+            priceText.textContent =
+                robot === equipped
+                    ? "EQUIPPED"
+                    : "EQUIP";
+        } else {
+            priceText.textContent =
+                price.toLocaleString() +
+                " RC • BUY";
+        }
+    });
+}
 
 robotCards.forEach(card => {
 
-    if (card.dataset.robot === selectedRobot) {
-        card.classList.add("selected");
-    }
-
-    const price =
-        Number(card.dataset.price);
-
-    if (coins < price) {
-        if (price > 0) {
-            card.classList.add("locked");
-        }
-    }
-
     card.addEventListener("click", () => {
 
-        if (coins < price) {
+        const robot = card.dataset.robot;
+        const price = Number(card.dataset.price);
+
+        /* LOCKED ROBOT = BUY ONLY */
+        if (!unlockedRobots.includes(robot)) {
+
+            if (coins < price) {
+                document.getElementById("status")
+                    .textContent =
+                    "NOT ENOUGH ROBO COINS";
+                return;
+            }
+
+            coins -= price;
+
+            localStorage.setItem(
+                "roboClashCoins",
+                coins
+            );
+
+            unlockedRobots.push(robot);
+            saveUnlocked();
+
+            localStorage.setItem(
+                "roboClashRobot",
+                robot
+            );
 
             document.getElementById("status")
                 .textContent =
-                "NOT ENOUGH ROBO COINS";
+                card.querySelector(".robot-name")
+                    .textContent +
+                " BOUGHT AND EQUIPPED";
 
+            updateRobots();
             return;
         }
 
-        robotCards.forEach(other => {
-            other.classList.remove("selected");
-        });
-
-        card.classList.add("selected");
-
+        /* ALREADY UNLOCKED = EQUIP */
         localStorage.setItem(
             "roboClashRobot",
-            card.dataset.robot
+            robot
         );
 
         document.getElementById("status")
             .textContent =
-            card.querySelector(".robot-name").textContent +
-            " ROBOT SELECTED";
+            card.querySelector(".robot-name")
+                .textContent +
+            " ROBOT EQUIPPED";
+
+        updateRobots();
     });
 
 });
+
+saveUnlocked();
+updateRobots();
 
 
 /* =========================
