@@ -119,11 +119,14 @@ const maps = [
         "A frozen military base built for combat."
     ],
     [
-        "SCRAP DESERT",
-        "A massive battlefield filled with abandoned machines."
-    ]
-];
-
+       [
+    "SCRAP DESERT",
+    "A massive battlefield filled with abandoned machines."
+],
+[
+    "SPACE ARENA",
+    "A zero-gravity battlefield where robots float."
+]
 
 // ====================
 // MAP ROLLER
@@ -1516,12 +1519,30 @@ function animate() {
     robotTime += 0.035;
 
 
-    // Small idle movement
+    // ====================
+// SPACE ARENA PHYSICS
+// ====================
 
+if (selectedMap && selectedMap[0] === "SPACE ARENA") {
+
+    // Zero gravity
+    robot.position.y =
+        4.5 +
+        Math.sin(robotTime * 0.8) * 0.25;
+
+    floor.visible = false;
+    grid.visible = false;
+
+} else {
+
+    // Normal gravity
     robot.position.y =
         1.8 +
-        Math.sin(robotTime) *
-        0.035;
+        Math.sin(robotTime) * 0.035;
+
+    floor.visible = true;
+    grid.visible = true;
+}
 
 
     // Weapon idle glow
