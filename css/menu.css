@@ -172,3 +172,43 @@ body {
             0 0 50px rgba(40, 124, 255, 0.9);
     }
 }
+/* ROBO CLASH - HOME SCREEN UPGRADE */
+
+body {
+    background:
+        linear-gradient(
+            rgba(3, 10, 25, 0.15),
+            rgba(3, 10, 25, 0.3)
+        ),
+        url("../assets/home-arena.png") center / cover no-repeat;
+
+    background-attachment: fixed;
+}
+
+/* Keep real buttons clickable */
+.menu-screen,
+.menu-buttons,
+.game-logo {
+    position: relative;
+    z-index: 2;
+}
+
+/* Smooth button glow */
+.menu-button {
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+.menu-button:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 25px #287cff;
+}
+
+/* Strong PLAY button */
+.menu-button.primary {
+    box-shadow:
+        0 0 15px #287cff,
+        0 0 35px rgba(40, 169, 255, 0.35);
+}
