@@ -67,36 +67,81 @@ scene.add(light);
 
 
 // ====================
-// ARENA
+// SCI-FI ARENA
 // ====================
 
 const floor = new THREE.Mesh(
-    new THREE.BoxGeometry(40, 1, 40),
+    new THREE.BoxGeometry(40, 1.2, 40),
     new THREE.MeshStandardMaterial({
-        color: 0x182235,
-        metalness: 0.6,
-        roughness: 0.45
+        color: 0x263752,
+        metalness: 0.85,
+        roughness: 0.28
     })
 );
 
 floor.position.y = -0.5;
-
 scene.add(floor);
 
-
-// Grid
+// Neon grid
 const grid = new THREE.GridHelper(
     40,
     40,
-    0x2488ff,
-    0x20304d
+    0x00d9ff,
+    0x28476b
 );
 
-grid.position.y = 0.02;
-
+grid.position.y = 0.12;
 scene.add(grid);
 
+// Glowing arena edges
+const edgeMaterial = new THREE.MeshStandardMaterial({
+    color: 0x00bfff,
+    emissive: 0x0066ff,
+    emissiveIntensity: 2
+});
 
+function addArenaEdge(x, y, z, sx, sy, sz) {
+    const edge = new THREE.Mesh(
+        new THREE.BoxGeometry(sx, sy, sz),
+        edgeMaterial
+    );
+
+    edge.position.set(x, y, z);
+    scene.add(edge);
+}
+
+// Four neon borders
+addArenaEdge(0, 0.15, -19.8, 40, 0.15, 0.25);
+addArenaEdge(0, 0.15, 19.8, 40, 0.15, 0.25);
+addArenaEdge(-19.8, 0.15, 0, 0.25, 0.15, 40);
+addArenaEdge(19.8, 0.15, 0, 0.25, 0.15, 40);
+
+// Central energy pad
+const energyPad = new THREE.Mesh(
+    new THREE.CylinderGeometry(3, 3, 0.25, 32),
+    new THREE.MeshStandardMaterial({
+        color: 0x087bff,
+        emissive: 0x004cff,
+        emissiveIntensity: 2,
+        metalness: 0.8
+    })
+);
+
+energyPad.position.set(0, 0.2, 0);
+scene.add(energyPad);
+
+// Energy beam
+const beam = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.18, 0.18, 6, 16),
+    new THREE.MeshBasicMaterial({
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 0.65
+    })
+);
+
+beam.position.set(0, 3.2, 0);
+scene.add(beam);
 // ====================
 // MAPS
 // ====================
