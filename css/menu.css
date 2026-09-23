@@ -180,7 +180,7 @@ body {
             rgba(3, 10, 25, 0.15),
             rgba(3, 10, 25, 0.3)
         ),
-        url("../assets/home-arena.png") center / cover no-repeat;
+       url("../assets/map-arena.png") center / cover no-repeat;
 
     background-attachment: fixed;
 }
