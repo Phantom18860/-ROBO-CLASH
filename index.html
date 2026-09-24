@@ -195,6 +195,46 @@
     );
 
 </script>
+<script>
+    const loadingScreen = document.getElementById("loading-screen");
+    const loadingProgress = document.getElementById("loading-progress");
+    const loadingPercent = document.getElementById("loading-percent");
+    const loadingStatus = document.getElementById("loading-status");
 
+    let progress = 0;
+
+    const loadingMessages = [
+        "CONNECTING TO BATTLE SYSTEM...",
+        "LOADING ROBOT DATABASE...",
+        "CALIBRATING WEAPON SYSTEMS...",
+        "PREPARING ARENA...",
+        "SYSTEM READY."
+    ];
+
+    const loadingTimer = setInterval(() => {
+        progress++;
+
+        loadingProgress.style.width = progress + "%";
+        loadingPercent.textContent = progress + "%";
+
+        if (progress % 20 === 0) {
+            const messageIndex = Math.min(
+                Math.floor(progress / 20) - 1,
+                loadingMessages.length - 1
+            );
+
+            loadingStatus.textContent =
+                loadingMessages[messageIndex];
+        }
+
+        if (progress >= 100) {
+            clearInterval(loadingTimer);
+
+            setTimeout(() => {
+                loadingScreen.classList.add("loading-finished");
+            }, 300);
+        }
+    }, 50);
+</script>
 </body>
 </html>
