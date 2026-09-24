@@ -212,3 +212,127 @@ body {
         0 0 15px #287cff,
         0 0 35px rgba(40, 169, 255, 0.35);
 }
+/* =========================
+   FUTURISTIC LOADING SCREEN
+========================= */
+
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #162d59 0%,
+            #080f25 48%,
+            #02040d 100%
+        );
+
+    color: white;
+    text-align: center;
+}
+
+.loading-content {
+    width: min(420px, 85vw);
+}
+
+.loading-label {
+    font-size: clamp(35px, 8vw, 65px);
+    font-weight: 900;
+    letter-spacing: 8px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 10px #168cff,
+        0 0 35px #005eff;
+}
+
+.loading-subtitle {
+    margin-top: 12px;
+
+    color: #ff3d66;
+    font-size: 12px;
+    letter-spacing: 5px;
+    font-weight: bold;
+}
+
+.loading-ring {
+    width: 85px;
+    height: 85px;
+
+    margin: 45px auto 25px;
+
+    border: 4px solid rgba(255,255,255,0.12);
+    border-top-color: #168cff;
+    border-right-color: #ff3158;
+
+    border-radius: 50%;
+
+    animation: loading-spin 1s linear infinite;
+}
+
+.loading-status {
+    color: #a9c7f5;
+    font-size: 11px;
+    letter-spacing: 2px;
+
+    margin-bottom: 20px;
+}
+
+.loading-bar {
+    width: 100%;
+    height: 7px;
+
+    background: #101a35;
+    border: 1px solid #304d82;
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+#loading-progress {
+    width: 0%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #087dff,
+        #00d9ff,
+        #ff3158
+    );
+
+    box-shadow: 0 0 15px #168cff;
+
+    transition: width 0.1s linear;
+}
+
+.loading-percent {
+    margin-top: 12px;
+
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: #d6e5ff;
+}
+
+@keyframes loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loading-fade {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.loading-finished {
+    animation: loading-fade 0.6s ease forwards;
+}
