@@ -177,8 +177,104 @@ const maps = [
 // MAP ROLLER
 // ====================
 
+// ====================
+// BLUE + RED BATTLE TRANSITION
+// ====================
+
+const transitionStyle = document.createElement("style");
+
+transitionStyle.textContent = `
+    #battle-transition {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        pointer-events: all;
+        overflow: hidden;
+    }
+
+    #battle-blue,
+    #battle-red {
+        width: 50%;
+        height: 100%;
+        position: relative;
+    }
+
+    #battle-blue {
+        background: linear-gradient(135deg, #087bff, #003b9e);
+        transform: translateX(-100%);
+    }
+
+    #battle-red {
+        background: linear-gradient(135deg, #b00020, #ff304f);
+        transform: translateX(100%);
+    }
+
+    #battle-transition.active #battle-blue {
+        animation: blueSlide 0.8s ease-out forwards;
+    }
+
+    #battle-transition.active #battle-red {
+        animation: redSlide 0.8s ease-out forwards;
+    }
+
+    #battle-transition.exit #battle-blue {
+        animation: blueExit 0.7s ease-in forwards;
+    }
+
+    #battle-transition.exit #battle-red {
+        animation: redExit 0.7s ease-in forwards;
+    }
+
+    @keyframes blueSlide {
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes redSlide {
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes blueExit {
+        to {
+            transform: translateX(-100%);
+        }
+    }
+
+    @keyframes redExit {
+        to {
+            transform: translateX(100%);
+        }
+    }
+`;
+
+document.head.appendChild(transitionStyle);
+
+const transition = document.createElement("div");
+transition.id = "battle-transition";
+
+const bluePanel = document.createElement("div");
+bluePanel.id = "battle-blue";
+
+const redPanel = document.createElement("div");
+redPanel.id = "battle-red";
+
+transition.appendChild(bluePanel);
+transition.appendChild(redPanel);
+
+document.body.appendChild(transition);
+
+
+// ====================
+// MAP ROLLER
+// ====================
+
 const mapRoll = document.getElementById("map-roll");
 const mapName = document.getElementById("map-name");
+
 const mapDescription =
     document.getElementById("map-description");
 
@@ -187,12 +283,18 @@ const rollStatus =
 
 let selectedMap = null;
 
-if (
-    mapRoll &&
-    mapName &&
-    mapDescription &&
-    rollStatus
-) {
+
+// Start the map roller AFTER the transition
+function startMapRoller() {
+
+    if (
+        !mapRoll ||
+        !mapName ||
+        !mapDescription ||
+        !rollStatus
+    ) {
+        return;
+    }
 
     rollStatus.textContent = "SELECTING MAP...";
 
@@ -205,6 +307,7 @@ if (
         mapDescription.textContent = randomMap[1];
 
     }, 120);
+
 
     setTimeout(() => {
 
@@ -219,13 +322,34 @@ if (
         rollStatus.textContent = "SELECTED MAP";
 
         setTimeout(() => {
-
             mapRoll.style.display = "none";
-
         }, 1000);
 
     }, 4000);
 }
+
+
+// ====================
+// PLAY TRANSITION
+// ====================
+
+transition.classList.add("active");
+
+
+// Hold the blue + red screen briefly
+setTimeout(() => {
+
+    transition.classList.add("exit");
+
+    setTimeout(() => {
+
+        transition.remove();
+
+        startMapRoller();
+
+    }, 700);
+
+}, 1400);
 
 
 // ============================================================
