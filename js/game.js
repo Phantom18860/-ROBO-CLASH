@@ -333,18 +333,48 @@ function startMapRoller() {
 // PLAY TRANSITION
 // ====================
 
-transition.classList.add("active");
+function playBattleTransition() {
 
+    transition.style.display = "flex";
 
-// Hold the blue + red screen briefly
-setTimeout(() => {
+    // Start off-screen
+    bluePanel.style.transform = "translateX(-100%)";
+    redPanel.style.transform = "translateX(100%)";
 
-    transition.classList.add("exit");
+    // Force the browser to register the starting position
+    void transition.offsetWidth;
 
+    // Slide IN
+    bluePanel.style.transition =
+        "transform 0.8s cubic-bezier(.8,0,.2,1)";
+
+    redPanel.style.transition =
+        "transform 0.8s cubic-bezier(.8,0,.2,1)";
+
+    bluePanel.style.transform = "translateX(0)";
+    redPanel.style.transform = "translateX(0)";
+
+    // Hold the battle screen
     setTimeout(() => {
 
-        transition.remove();
+        // Slide OUT
+        bluePanel.style.transform = "translateX(-100%)";
+        redPanel.style.transform = "translateX(100%)";
 
+        setTimeout(() => {
+
+            transition.remove();
+
+            // Start map selection
+            startMapRoller();
+
+        }, 800);
+
+    }, 1400);
+}
+
+// Start transition
+playBattleTransition();
         startMapRoller();
 
     }, 700);
